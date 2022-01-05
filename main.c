@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "rules.h"
-/*
+/* funcion que rellene la estructura inicial 
+ * funcion que verifique TODO
  * Funcion para que baje (recibe puntero a la matriz, devuelve si ya no hay mas nada que actualizar) (delay modificable)
  * Lee si se completo una fila (si encuentra, llama a la que baja) (recibe puntero a la matriz, no devuelve)
  * Funcion que rote las piezas (recibe un puntero a la pieza)

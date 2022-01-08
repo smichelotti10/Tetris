@@ -17,21 +17,21 @@
 
 void clear_mat(int mat[FIL][COL]);
 
-int main(int argc, char** argv) {
+int main(void) {
         
-   int matriz[FIL][COL];
-   clear_mat(matriz);
-    
-   pieza_t in_use;
-	 generador(&in_use); //llamamos a la función que rellena los campos de la pieza
+    int matriz[FIL][COL];
+    clear_mat(matriz);
+
+    pieza_t in_use;
+    generador(&in_use); //llamamos a la función que rellena los campos de la pieza
 	//for(int cont = 10 ; cont <= 19 ; cont++){	
 	//for(int contador = 0; contador < 10 ; contador++)
 	//{   
-	rotar(&in_use, matriz);
-        rotar(&in_use, matriz);  
-        rotar(&in_use, matriz);  
-        rotar(&in_use, matriz);  
-        rotar(&in_use, matriz);  
+    rotar(&in_use, matriz);
+    rotar(&in_use, matriz);  
+    rotar(&in_use, matriz);  
+    rotar(&in_use, matriz);  
+    rotar(&in_use, matriz);  
 
   
    return 0;

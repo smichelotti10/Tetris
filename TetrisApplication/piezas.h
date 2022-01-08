@@ -15,6 +15,8 @@
 #define PIEZAS_H
 
 void generador(pieza_t * to_use);
+void move(pieza_t* in_use, int mat[FIL][COL], char direccion);
+int check(pieza_t*, int mat[FIL][COL]);
 
 enum nombres_bloques
 {

@@ -187,9 +187,9 @@ void rotar(pieza_t* in_use,int mat[FIL][COL])
     int i, j; //indices de ayuda para recorrer la matriz
     for (i=0; i<4; i++){
        mat_aux[to_use.mat_bloque[1][i]][to_use.mat_bloque[0][i]] = (int) to_use.id;
-   }
+   	}
     
-    /*ESTA ES LA PARTE QUE ROTA LA MATRIZ*/
+/*ESTA ES LA PARTE QUE ROTA LA MATRIZ*/
     for (i = 0; i < 4 / 2; i++) {
         for (j = i; j < 4 - i - 1; j++) {
  
@@ -203,29 +203,24 @@ void rotar(pieza_t* in_use,int mat[FIL][COL])
         }
     }
     
-    
-    
-        int bloque=0;
+	int bloque=0;
 
-        for (int x=0; x<4; x++){
-            
-            for (int y=0; y<4; y++){
-                
-                if (mat_aux[x][y]!=0){
-                    
-                    to_use.mat_bloque[0][bloque] = y;
-                    to_use.mat_bloque[1][bloque] = x;
-                    bloque++;
-                }
-            }
-        }
+	for (int x=0; x<4; x++){
+
+	    for (int y=0; y<4; y++){
+
+		if (mat_aux[x][y]!=0){
+
+		    to_use.mat_bloque[0][bloque] = y;
+		    to_use.mat_bloque[1][bloque] = x;
+		    bloque++;
+		}
+	    }
+	}
     
-    
-    
-    
-        if(!check(&to_use, mat)){
-            *in_use = to_use;
-        }
+	if(!check(&to_use, mat)){
+		*in_use = to_use;
+	}
     
         
 }

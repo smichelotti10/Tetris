@@ -139,8 +139,8 @@ int check(pieza_t* pieza, int mat[FIL][COL]){
         
         
         for(j=0; j<=3; j++){ 
-            
-            if(mat[(pieza->mat_bloque[0][j])+(pieza->coord_x)][(pieza->mat_bloque[1][j])+(pieza->coord_y)]){ //localizamos los bloques dentro de la matriz de juego //verifica que no haya superposición de los bloques
+
+            if(mat[(pieza->mat_bloque[1][j])+(pieza->coord_y)][(pieza->mat_bloque[0][j])+(pieza->coord_x)]){ //localizamos los bloques dentro de la matriz de juego //verifica que no haya superposición de los bloques
                 return 1; // si devuelve 1 es porque hay error de superposición
             }
             
@@ -159,3 +159,14 @@ int check(pieza_t* pieza, int mat[FIL][COL]){
         }
     return 0;
 }
+
+void all_down(pieza_t* in_use,int matriz[FIL][COL])
+{
+int contador;
+
+for(contador = 0 ; contador < 20 ; contador++)
+{
+	move(in_use,matriz,ABA);
+}
+}
+

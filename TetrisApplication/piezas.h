@@ -17,6 +17,7 @@
 void generador(pieza_t * to_use);
 void move(pieza_t* in_use, int mat[FIL][COL], char direccion);
 int check(pieza_t*, int mat[FIL][COL]);
+void all_down(pieza_t* in_use,int matriz[FIL][COL]);
 
 enum nombres_bloques
 {

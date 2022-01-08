@@ -9,8 +9,10 @@
  * Funcion para que baje (recibe puntero a la matriz, devuelve si ya no hay mas nada que actualizar) (delay modificable)
  * Lee si se completo una fila (si encuentra, llama a la que baja) (recibe puntero a la matriz, no devuelve)
  * Funcion que rote las piezas (recibe un puntero a la pieza)
- * Funcion que mueva las piezas (capaz van juntas)
- * Funcion que genere las piezas
+ * el sistema de puntos en general que depende del sistema de nivel
+ * el sistema de nivel que depende del sistema de puntos
+ * 
+
  */
 
 void clear_mat(int mat[FIL][COL]);
@@ -23,18 +25,21 @@ int main(int argc, char** argv) {
     
    pieza_t in_use;
 	 generador(&in_use); //llamamos a la función que rellena los campos de la pieza
-   
-	printf("id = %d\ncoordx = %d\n",in_use.id,in_use.coord_y);
+	//for(int cont = 10 ; cont <= 19 ; cont++){	
+	//for(int contador = 0; contador < 10 ; contador++)
+	//{   
+	matriz[18][4]=1;
+	//}	}
+	printf("id = %d\ncoordy = %d\n",in_use.id,in_use.coord_y);
 
-	move(&in_use, matriz,ABA);
+	all_down(&in_use,matriz);
 
-	printf("id = %d\ncoordx = %d\n",in_use.id,in_use.coord_y);
+	printf("id = %d\ncoordy = %d\n",in_use.id,in_use.coord_y);
 
     move(&in_use, matriz,ABA);
-    move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);move(&in_use, matriz,ABA);
-		
+    	
 
-	printf("id = %d\ncoordx = %d\n",in_use.id,in_use.coord_y);   
+	printf("id = %d\ncoordy = %d\n",in_use.id,in_use.coord_y);   
 
   
    return 0;

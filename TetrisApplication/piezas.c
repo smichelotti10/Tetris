@@ -143,7 +143,7 @@ void generador(pieza_t * in_use, game_stats_t* jugador)
     }
 }
 
-int move(pieza_t* in_use, int mat[FIL][COL], char direccion)
+int mover_pieza(pieza_t* in_use, int mat[FIL][COL], char direccion)
 {
 pieza_t to_use = *in_use;
 
@@ -211,7 +211,7 @@ int contador;
 
 for(contador = 0 ; contador < 20 ; contador++)
 {
-	move(in_use,matriz,ABA);
+	mover_pieza(in_use,matriz,ABA);
 }
     setear_pieza(in_use, matriz);
 }
@@ -362,7 +362,7 @@ void push_mat_down (int matriz[FIL][COL], int fila)
     }
 }
 
-void print_mat (pieza_t* in_use, int matriz[FIL][COL])
+/*void print_mat (pieza_t* in_use, int matriz[FIL][COL])
 {
     int i, j, k;
 
@@ -403,6 +403,7 @@ void print_mat (pieza_t* in_use, int matriz[FIL][COL])
     printf("--------------------------------");
     printf("\n\n\n");
 }
+ * */
 
 void setear_pieza(pieza_t* pieza, int mat[FIL][COL])
 {
@@ -427,6 +428,7 @@ int game_over(int matriz[FIL][COL])
     return 0;
 }
 
+/*
 void delay(int level)
 {
     float number_of_seconds = 0.7 - ((float)(level - 1) * 0.07);
@@ -438,6 +440,7 @@ void delay(int level)
     while (clock() < start_time + number_of_seconds * CLOCKS_PER_SEC)
         ;
 }
+ * */
 
 void clear_mat(int mat[FIL][COL]){ //función que borra la matriz, podriamos hacerla general.
     

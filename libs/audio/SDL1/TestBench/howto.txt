@@ -1,0 +1,2 @@
+How to compile: 
+gcc testaudio.c ../libAudioSDL1.o -I/usr/local/include -L/usr/local/lib -lSDL -lpthread -o testaudio.out

@@ -5,6 +5,8 @@
 #include    <allegro5/allegro.h>
 #include    <allegro5/allegro_native_dialog.h>
 #include    <allegro5/allegro_primitives.h>
+#include    <allegro5/allegro_ttf.h>
+#include    <allegro5/allegro_font.h>
 
 #define     TAM_BLOQUE      40
 
@@ -14,10 +16,9 @@
 void print_mat_juego (pieza_t* in_use, pieza_t *to_use, int matriz[FIL][COL]);
 void print_bloque_color (int pieza, float i, float j);
 void clear_display (void);
-//void get_input (pieza_t* in_use, int mat[FIL][COL], ALLEGRO_KEYBOARD_STATE* estado_teclado);
 void print_siguiente_pieza (pieza_t* to_use);
 void print_bordes_juego (void);
-void get_input (ALLEGRO_EVENT event, pieza_t* in_use, int mat[FIL][COL]);
+void get_input (ALLEGRO_EVENT event, pieza_t* in_use, int mat[FIL][COL], char* end);
 
 int main(void) {
 
@@ -35,6 +36,7 @@ int main(void) {
     ALLEGRO_DISPLAY* display;
     ALLEGRO_EVENT_QUEUE *event_queue;
     ALLEGRO_EVENT event;
+    ALLEGRO_FONT* font;
     
     //INICIALIZO LAS VARIABLES Y BIBLIOTECAS
     srand(time(NULL)); //genero una semilla randomizada
@@ -44,30 +46,48 @@ int main(void) {
     generador(&to_use, &jugador);
     
     al_install_keyboard();
+    al_init_primitives_addon();
+    al_init_font_addon();
+    al_init_ttf_addon();
     
     event_queue = al_create_event_queue();
-    al_register_event_source(event_queue, al_get_keyboard_event_source());
-    al_init_primitives_addon(); 
+    al_register_event_source(event_queue, al_get_keyboard_event_source());  
     display = al_create_display(ANCHO_PANTALLA, ALTO_PANTALLA);   
     al_set_new_display_flags(ALLEGRO_FRAMELESS);   
     al_set_window_title(display, "Tetris");
     al_set_window_position(display, 200, 5);
+    font = al_load_ttf_font("nombre.ttf", 36, 0);
     
     if(!display) {
         al_show_native_message_box(NULL,NULL,NULL, "No se pudo crear un display", NULL, 0);
         return -1;
     }
     
+    int value = al_show_native_message_box(display, "MessageBox", "Inicio del Juego", "Ust está por comenzar a jugar TETRIS. Desea continuar?", NULL, ALLEGRO_MESSAGEBOX_YES_NO);
+    if(value!=1)
+    {
+        al_rest(1.0);
+        al_destroy_display(display);
+        al_destroy_event_queue(event_queue);
+        al_destroy_font(font);
+        
+        return 0;
+    }
+     
+    al_draw_text(font, al_map_rgb(255, 255, 255), ANCHO_PANTALLA/2, ALTO_PANTALLA/2, ALLEGRO_ALIGN_CENTRE, "TETRIS");
+    al_flip_display();
+    al_rest(1.0);
+    
     // JUEGO
     unsigned long int time = 0;
-    int end=0;
+    char end=0;
     
     while(!end){
         
         print_mat_juego (&in_use,&to_use,matriz);
         if (time==0)
         {
-            time = 0.7*10000000 - ((jugador.level - 1) * 0.07);
+            time = (0.7-(jugador.level-1)*0.069)*10000000;
         }
 
         while (--time) {
@@ -91,7 +111,7 @@ int main(void) {
         }
         else 
         {
-            get_input(event,&in_use,matriz);
+            get_input(event,&in_use,matriz, &end);
         }
         
         if(game_over(matriz))
@@ -106,6 +126,7 @@ int main(void) {
     // ELIMINO MEMORIA RESERVADA DINAMICAMENTE
     al_destroy_display(display);
     al_destroy_event_queue(event_queue);
+    al_destroy_font(font);
     
     return 0;
 }
@@ -116,15 +137,7 @@ void print_mat_juego (pieza_t* in_use, pieza_t *to_use, int matriz[FIL][COL])
 
     clear_display();
     
-    for (y=0; y<ALTO_PANTALLA; y++) {
-        for (x=0; x<ANCHO_PANTALLA; x++) {
-            
-            if ( x==0 || x== 11 || x== 16 || y==0 || y== 17)
-            {
-                al_draw_filled_rounded_rectangle(TAM_BLOQUE*x,TAM_BLOQUE*y,TAM_BLOQUE*(x+1),TAM_BLOQUE*(y+1),5,5,DORADO);
-            }
-        }
-    }
+    print_bordes_juego();
     print_siguiente_pieza(to_use);
 
     for (y=4; y<FIL; y++) {
@@ -209,7 +222,6 @@ void print_siguiente_pieza (pieza_t* to_use) {
             break;
         }
     }
-    al_flip_display();
 }
 
 void print_bordes_juego (void) {
@@ -219,16 +231,15 @@ void print_bordes_juego (void) {
     for (fil=0; fil<ALTO_PANTALLA; fil++) {
         for (col=0; col<ANCHO_PANTALLA; col++) {
             
-            if ( col==0 || col== 11 || col== 16 || fil==0 || fil== 17)
+            if ( col==0 || col== 11 || col== 16 || fil==0 || fil== 17 || ( col>11 && col<16 && fil==5))
             {
                 al_draw_filled_rounded_rectangle(TAM_BLOQUE*col,TAM_BLOQUE*fil,TAM_BLOQUE*(col+1),TAM_BLOQUE*(fil+1),5,5,DORADO);
             }
         }
     }
-    al_flip_display();
 }
 
-void get_input (ALLEGRO_EVENT event, pieza_t* in_use, int mat[FIL][COL]) {
+void get_input (ALLEGRO_EVENT event, pieza_t* in_use, int mat[FIL][COL], char*end) {
        
     switch (event.keyboard.keycode)
     {
@@ -247,5 +258,9 @@ void get_input (ALLEGRO_EVENT event, pieza_t* in_use, int mat[FIL][COL]) {
         case ALLEGRO_KEY_SPACE: 
             all_down(in_use, mat);
             break;
+        case ALLEGRO_KEY_ESCAPE:
+            *end=1;
+            break;
+            
     }
-}        
+}   

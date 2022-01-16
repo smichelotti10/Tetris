@@ -312,15 +312,17 @@ void fila_completa (int matriz[FIL][COL], game_stats_t* jugador)
 
     for(fil=0; fil<FIL; fil++) {
 
-        for(col=1, bloques=0; col<COL; col++) { //cambiado de col=0 a col=1 para la RPI   // recorro cada fila de la matriz analizando si la fila esta completa o no.
+        for(col=0, bloques=0; col<COL; col++) { //cambiado de col=0 a col=1 para la RPI   // recorro cada fila de la matriz analizando si la fila esta completa o no.
 
-            if (matriz[fil][col]!=0) {
+            if (matriz[fil][col]!=0)
+            {
 
                 bloques++;
             }
 
         } 
-        if (bloques==9) {   //cambiado de 10 a 9 para la RPI         // Si la fila esta completa llamo a la funcion push_mat_down para desplazar una fila
+        if (bloques==10)
+        {   //cambiado de 10 a 9 para la RPI         // Si la fila esta completa llamo a la funcion push_mat_down para desplazar una fila
             push_mat_down (matriz, fil);            // para abajo todas las filas de arriba a la que hay que eliminar
             cant ++;
         }

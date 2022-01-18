@@ -13,13 +13,15 @@
 #define     ANCHO_PANTALLA  TAM_BLOQUE*(10+7)
 #define     ALTO_PANTALLA   TAM_BLOQUE*(16+2)
 
-void print_mat_juego (pieza_t* in_use, pieza_t *to_use, int matriz[FIL][COL],ALLEGRO_FONT* font);
+void print_mat_juego (pieza_t* in_use, pieza_t *to_use, int matriz[FIL][COL],ALLEGRO_FONT* font, game_stats_t* jugador);
 void print_bloque_color (int pieza, float i, float j);
 void clear_display (void);
 void print_siguiente_pieza (pieza_t* to_use);
 void print_bordes_juego (void);
 void get_input (ALLEGRO_EVENT event, ALLEGRO_EVENT_QUEUE *event_queue, pieza_t* in_use, int mat[FIL][COL], char*end, ALLEGRO_FONT* font, game_stats_t* jugador);
-void menu (ALLEGRO_EVENT event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador);
+void menu_pausa (ALLEGRO_EVENT event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador);
+void itoa (int n, char s[]);
+void game_over_allegro (ALLEGRO_EVENT event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador);
 
 int main(void) {
 
@@ -83,9 +85,11 @@ int main(void) {
     unsigned long int time = 0;
     char end=0;
     
+    
+    
     while(!end){
         
-        print_mat_juego (&in_use,&to_use,matriz,font);
+        print_mat_juego (&in_use,&to_use,matriz,font, &jugador);
         if (time==0)
         {
             time = (0.7-(jugador.level-1)*0.069)*10000000;
@@ -107,7 +111,7 @@ int main(void) {
                 fila_completa(matriz, &jugador); //vemos si se completo una fila para sumar puntos y eso
                 in_use = to_use;
                 generador(&to_use, &jugador);    // genero la siguiente pieza 
-                print_mat_juego (&in_use,&to_use,matriz,font);
+                print_mat_juego (&in_use,&to_use,matriz,font, &jugador);
             }
         }
         else 
@@ -117,8 +121,7 @@ int main(void) {
         
         if(game_over(matriz))
         {
-            printf("GAME OVER\n Final Score: %ld\n Level: %d\n", jugador.score, jugador.level);
-            return 0;
+            game_over_allegro(event, event_queue, font, &end, &in_use, matriz, &jugador);
         }
         
         
@@ -132,16 +135,22 @@ int main(void) {
     return 0;
 }
 
-void print_mat_juego (pieza_t* in_use, pieza_t *to_use, int matriz[FIL][COL],ALLEGRO_FONT* font)
+void print_mat_juego (pieza_t* in_use, pieza_t *to_use, int matriz[FIL][COL],ALLEGRO_FONT* font, game_stats_t* jugador)
 {
     int y, x, k;
+    char puntaje[6], nivel[10];
+    
+    itoa(jugador->score, puntaje);
+    itoa(jugador->level, nivel);
 
     clear_display();
     
     print_bordes_juego();
     print_siguiente_pieza(to_use);
-    al_draw_text(font, al_map_rgb(255, 255, 255), TAM_BLOQUE*12.5, TAM_BLOQUE*6.5, ALLEGRO_ALIGN_LEFT, "score");
-    al_draw_text(font, al_map_rgb(255, 255, 255), TAM_BLOQUE*12.5, TAM_BLOQUE*9.5, ALLEGRO_ALIGN_LEFT, "level");
+    al_draw_text(font, al_map_rgb(255, 255, 255), TAM_BLOQUE*14, TAM_BLOQUE*6.5, ALLEGRO_ALIGN_CENTRE, "score");
+    al_draw_text(font, al_map_rgb(255, 255, 255), TAM_BLOQUE*14, TAM_BLOQUE*7.5, ALLEGRO_ALIGN_CENTRE, puntaje);
+    al_draw_text(font, al_map_rgb(255, 255, 255), TAM_BLOQUE*14, TAM_BLOQUE*9.5, ALLEGRO_ALIGN_CENTRE, "level");
+    al_draw_text(font, al_map_rgb(255, 255, 255), TAM_BLOQUE*14, TAM_BLOQUE*10.5, ALLEGRO_ALIGN_CENTRE, nivel);
 
     for (y=4; y<FIL; y++) {
         for (x=0; x<COL; x++) {
@@ -265,90 +274,183 @@ void get_input (ALLEGRO_EVENT event, ALLEGRO_EVENT_QUEUE *event_queue, pieza_t* 
             *end=1;
             break;
         case ALLEGRO_KEY_M:
-            menu(event, event_queue, font, end, in_use, mat, jugador);                 // PLAY/PAUSE, ESCAPE, TOP-SCORES, REINICIAR JUEGO
+            menu_pausa(event, event_queue, font, end, in_use, mat, jugador);                 // PLAY/PAUSE, ESCAPE, TOP-SCORES, REINICIAR JUEGO
             break;
             
     }
 }  
 
-void menu (ALLEGRO_EVENT event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador) {
+void menu_pausa (ALLEGRO_EVENT event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador) {
    
-    int contador = 0;
+    char contador = 0;
     char end_menu=0;
     
     clear_display();
     al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*5, ALLEGRO_ALIGN_CENTRE, "PLAY");
     al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*7, ALLEGRO_ALIGN_CENTRE, "QUIT");
-    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "TOP SCORES");
+    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "HIGH SCORES");
     al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "REINICIAR JUEGO");
     al_flip_display();
     
     while(!end_menu) {
         al_wait_for_event(event_queue, &event);
-        switch (event.keyboard.keycode)
-        {
-            case ALLEGRO_KEY_DOWN: 
-                contador++;               
-                break;
-            case ALLEGRO_KEY_UP:
-                contador--;
-                break;
-            case ALLEGRO_KEY_ENTER:
-                end_menu=1;
-                switch (contador/4)
-                {
-                    case 0:             // Vuelve al juego
-                        break;
-                    case 1:
-                        *end=1;         // Termina el juego
-                        break;
-                    case 2:             // Top Scores
-                        break;
-                    case 3:    
-                        clear_mat(matriz);
-                        generador(in_use, jugador);
-                        init_jugador(jugador);
-                        clear_display();
-                        break;                        
-                }
-                break;
+        if (event.type == ALLEGRO_EVENT_KEY_DOWN)
+            {
+                switch (event.keyboard.keycode)
+            {
+                case ALLEGRO_KEY_DOWN: 
+                    contador++;               
+                    break;
+                case ALLEGRO_KEY_UP:
+                    contador--;
+                    break;
+                case ALLEGRO_KEY_ENTER:
+                    end_menu=1;
+                    switch (contador%4)
+                    {
+                        case 0:             // Vuelve al juego
+                            break;
+                        case 1:
+                            *end=1;         // Termina el juego
+                            break;
+                        case 2:             // Top Scores
+                            break;
+                        case 3:    
+                            clear_mat(matriz);
+                            generador(in_use, jugador);
+                            init_jugador(jugador);
+                            clear_display();
+                            break;                        
+                    }
+                    break;
+            }
+            switch (contador%4)
+            {
+                case 0:
+                    clear_display();
+                    al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*5, ALLEGRO_ALIGN_CENTRE, "PLAY");
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*7, ALLEGRO_ALIGN_CENTRE, "QUIT");
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "HIGH SCORES");
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "REINICIAR JUEGO");
+                    al_flip_display();
+                    break;
+                case 1:
+                    clear_display();
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*5, ALLEGRO_ALIGN_CENTRE, "PLAY");
+                    al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*7, ALLEGRO_ALIGN_CENTRE, "QUIT");
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "HIGH SCORES");
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "REINICIAR JUEGO");
+                    al_flip_display();
+                    break;
+                case 2:
+                    clear_display();
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*5, ALLEGRO_ALIGN_CENTRE, "PLAY");
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*7, ALLEGRO_ALIGN_CENTRE, "QUIT");
+                    al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "HIGH SCORES");
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "REINICIAR JUEGO");
+                    al_flip_display();
+                    break;
+                case 3:
+                    clear_display();
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*5, ALLEGRO_ALIGN_CENTRE, "PLAY");
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*7, ALLEGRO_ALIGN_CENTRE, "QUIT");
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "HIGH SCORES");
+                    al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "REINICIAR JUEGO");
+                    al_flip_display();
+                    break;
+            }
         }
-        switch (contador/4)
-        {
-            case 0:
-                clear_display();
-                al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*5, ALLEGRO_ALIGN_CENTRE, "PLAY/PAUSA");
-                al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*7, ALLEGRO_ALIGN_CENTRE, "QUIT");
-                al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "TOP SCORES");
-                al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "REINICIAR JUEGO");
-                al_flip_display();
-                break;
-            case 1:
-                clear_display();
-                al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*5, ALLEGRO_ALIGN_CENTRE, "PLAY/PAUSA");
-                al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*7, ALLEGRO_ALIGN_CENTRE, "QUIT");
-                al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "TOP SCORES");
-                al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "REINICIAR JUEGO");
-                al_flip_display();
-                break;
-            case 2:
-                clear_display();
-                al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*5, ALLEGRO_ALIGN_CENTRE, "PLAY/PAUSA");
-                al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*7, ALLEGRO_ALIGN_CENTRE, "QUIT");
-                al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "TOP SCORES");
-                al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "REINICIAR JUEGO");
-                al_flip_display();
-                break;
-            case 3:
-                clear_display();
-                al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*5, ALLEGRO_ALIGN_CENTRE, "PLAY/PAUSA");
-                al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*7, ALLEGRO_ALIGN_CENTRE, "QUIT");
-                al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "TOP SCORES");
-                al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "REINICIAR JUEGO");
-                al_flip_display();
-                break;
-        }
-        
+    }
+}
+
+void itoa (int n, char s[]) {
+    
+    int i, signo;
+
+    if ((signo = n) < 0)  
+    {
+        n = -n;          
     }
     
+    i = 0;
+    
+    do {       
+        s[i++] = n % 10 + '0';   
+    } while ((n /= 10) > 0);     
+     
+    if (signo < 0)
+    {
+        s[i++] = '-';
+    }
+    
+    s[i] = '\0';
+    
+    int j;
+    char c;
+
+    for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+        c = s[i];
+        s[i] = s[j];
+        s[j] = c;
+     }
+} 
+
+void game_over_allegro (ALLEGRO_EVENT event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador) {
+    
+    char contador = 0;
+    char end_game_over=0;
+    
+    clear_display();
+    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*4, ALLEGRO_ALIGN_CENTRE, "GAME OVER");
+    al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*7, ALLEGRO_ALIGN_CENTRE, "REINICIAR JUEGO");
+    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "SALIR");
+    al_flip_display();
+    
+    while(!end_game_over) {
+        al_wait_for_event(event_queue, &event);
+        if (event.type == ALLEGRO_EVENT_KEY_DOWN)
+            {
+                switch (event.keyboard.keycode)
+            {
+                case ALLEGRO_KEY_DOWN: 
+                    contador++;               
+                    break;
+                case ALLEGRO_KEY_UP:
+                    contador--;
+                    break;
+                case ALLEGRO_KEY_ENTER:
+                    end_game_over=1;
+                    switch (contador%2)
+                    {
+                        case 0:             // Vuelve al juego
+                            clear_mat(matriz);
+                            generador(in_use, jugador);
+                            init_jugador(jugador);
+                            clear_display();
+                            break;;
+                        case 1:
+                            *end=1;         // Termina el juego
+                            break;                                                   
+                    }
+                    break;
+            }
+            switch (contador%2)
+            {
+                case 0:
+                    clear_display();
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*4, ALLEGRO_ALIGN_CENTRE, "GAME OVER");
+                    al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*7, ALLEGRO_ALIGN_CENTRE, "REINICIAR JUEGO");
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "SALIR");
+                    al_flip_display();
+                    break;
+                case 1:
+                    clear_display();
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*4, ALLEGRO_ALIGN_CENTRE, "GAME OVER");
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*7, ALLEGRO_ALIGN_CENTRE, "REINICIAR JUEGO");
+                    al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "SALIR");
+                    al_flip_display();
+                    break;
+            }
+        }
+    }
 }

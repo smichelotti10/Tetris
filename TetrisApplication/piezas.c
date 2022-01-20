@@ -3,9 +3,70 @@
 #include <time.h>
 #include "rules.h"
 #include "piezas.h"
+
+#define RPI 0
+#define ALLEGRO 1
+
+#ifndef PLATAFORMA    
+#define PLATAFORMA ALLEGRO
+#endif
+
+#if PLATAFORMA == RPI
+
 #include "termlib.h"
 #include "disdrv.h"
 #include "joydrv.h"
+
+void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next)
+{
+    int fil, col, i;
+
+    for (i=0; i<COL; i++) {                 // Primero se va a limpiar la fila que se completo, podemos 
+                                            // agregar un delay si queremos para que no aparezca todo de una.
+        matriz[fila][i] = 0;
+  
+        print_mat(NULL,matriz,next);
+        espera(0.07);                              //Parte agregada para la RPI
+    }
+
+    int aux;
+    for (fil=fila; fil>0; fil--) {          // Este ciclo baja toda la batriz sobre la fila que se elimino en un bloque
+
+        for (col=0; col<COL; col++) {           // Podemos agregar delay cada vez que realiza este for para mostrar una animacion
+
+            aux = matriz[fil][col];
+            matriz[fil][col] = matriz[fil-1][col];
+            matriz[fil-1][col] = aux;
+        }
+    }
+}
+
+#elif PLATAFORMA == ALLEGRO
+
+void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next)
+{
+    int fil, col, i;
+
+    for (i=0; i<COL; i++) {                 // Primero se va a limpiar la fila que se completo, podemos 
+                                            // agregar un delay si queremos para que no aparezca todo de una.
+        matriz[fila][i] = 0;
+  
+        //AGREGAR PRINT MAT DE ALLEGRO
+    }
+
+    int aux;
+    for (fil=fila; fil>0; fil--) {          // Este ciclo baja toda la batriz sobre la fila que se elimino en un bloque
+
+        for (col=0; col<COL; col++) {           // Podemos agregar delay cada vez que realiza este for para mostrar una animacion
+
+            aux = matriz[fil][col];
+            matriz[fil][col] = matriz[fil-1][col];
+            matriz[fil-1][col] = aux;
+        }
+    }
+}
+
+#endif 
 
 void init_jugador(game_stats_t* jugador)
 {
@@ -15,8 +76,7 @@ void init_jugador(game_stats_t* jugador)
 
 }
 
-void generador(pieza_t * in_use, game_stats_t* jugador)
-{
+void generador(pieza_t * in_use, game_stats_t* jugador) {
     
     int aux;
     aux = rand();
@@ -54,9 +114,7 @@ void generador(pieza_t * in_use, game_stats_t* jugador)
             jugador->level++;
             break;
         case LEVEL10:
-            jugador->level++;
-            break;
-            
+            jugador->level++;  
     }
     
     switch  (in_use->id)
@@ -149,37 +207,37 @@ void generador(pieza_t * in_use, game_stats_t* jugador)
 
 int mover_pieza(pieza_t* in_use, int mat[FIL][COL], char direccion)
 {
-pieza_t to_use = *in_use;
+    pieza_t to_use = *in_use;
 
-if(direccion == DER) //#define DER 'd'
-{
-	(to_use.coord_x)++;
-	if(!check(&to_use,mat))
-	{
-		*in_use = to_use;
-	}
-}
-else if (direccion == IZQ)
-{
-	(to_use.coord_x)--;	
-	if(!check(&to_use,mat))
-	{
-		*in_use = to_use;
-	}
-}
-else if (direccion == ABA)
-{
-	(to_use.coord_y)++;
-	if(!check(&to_use,mat))
-	{
-		*in_use = to_use;
-	}
-        else
-        {
-            return 1; //esto es por si llego al final o si se choca una pieza, avisa para que se setee.
-        }
-}
-return 0;
+    if(direccion == DER) //#define DER 'd'
+    {
+            (to_use.coord_x)++;
+            if(!check(&to_use,mat))
+            {
+                    *in_use = to_use;
+            }
+    }
+    else if (direccion == IZQ)
+    {
+            (to_use.coord_x)--;	
+            if(!check(&to_use,mat))
+            {
+                    *in_use = to_use;
+            }
+    }
+    else if (direccion == ABA)
+    {
+            (to_use.coord_y)++;
+            if(!check(&to_use,mat))
+            {
+                    *in_use = to_use;
+            }
+            else
+            {
+                return 1; //esto es por si llego al final o si se choca una pieza, avisa para que se setee.
+            }
+    }
+    return 0;
 }
 
 int check(pieza_t* pieza, int mat[FIL][COL]){
@@ -209,19 +267,19 @@ int check(pieza_t* pieza, int mat[FIL][COL]){
     return 0;
 }
 
-void all_down(pieza_t* in_use,int matriz[FIL][COL])
-{
-int contador;
+void all_down(pieza_t* in_use,int matriz[FIL][COL]) {
+    
+    int contador;
 
-for(contador = 0 ; contador < 20 ; contador++)
-{
-	mover_pieza(in_use,matriz,ABA);
-}
-    setear_pieza(in_use, matriz);
+    for(contador = 0 ; contador < 20 ; contador++)
+    {
+            mover_pieza(in_use,matriz,ABA);
+    }
+        setear_pieza(in_use, matriz);
 }
 
-void rotar(pieza_t* in_use,int mat[FIL][COL])
-{
+void rotar(pieza_t* in_use,int mat[FIL][COL]) {
+    
     pieza_t to_use = *in_use;
     
 /*CREO UNA MATRIZ AUXILIAR PARA MANEJAR LOS DATOS DE LA ESTRUCTURA*/     
@@ -309,13 +367,13 @@ void rotar(pieza_t* in_use,int mat[FIL][COL])
     }
 }
 
-void fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* in_use, pieza_t* next)
+void fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next)
 {
     int fil, col, bloques, cant=0;
 
     for(fil=0; fil<FIL; fil++) {
 
-        for(col=1, bloques=0; col<COL; col++) {   // recorro cada fila de la matriz analizando si la fila esta completa o no.
+        for(col=0, bloques=0; col<COL; col++) {   // recorro cada fila de la matriz analizando si la fila esta completa o no.
 
             if (matriz[fil][col]!=0) {
 
@@ -323,8 +381,8 @@ void fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* in_use
             }
 
         } 
-        if (bloques==9) {           // Si la fila esta completa llamo a la funcion push_mat_down para desplazar una fila
-            push_mat_down (matriz, fil, in_use, next);            // para abajo todas las filas de arriba a la que hay que eliminar
+        if (bloques==10) {           // Si la fila esta completa llamo a la funcion push_mat_down para desplazar una fila
+            push_mat_down (matriz, fil, next);            // para abajo todas las filas de arriba a la que hay que eliminar
             cant ++;
         }
     }
@@ -347,8 +405,6 @@ void fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* in_use
 
 void espera(float number_of_seconds)
 {
-
-    //float miliseconds = number_of_seconds * 1000;
     // Storing start time
     clock_t start_time = clock();
 
@@ -356,64 +412,6 @@ void espera(float number_of_seconds)
     while (clock() < start_time + number_of_seconds * CLOCKS_PER_SEC)
         ;
 }
-
-void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* in_use, pieza_t* next)
-{
-    int fil, col, i;
-
-    for (i=0; i<COL; i++) {                 // Primero se va a limpiar la fila que se completo, podemos 
-                                            // agregar un delay si queremos para que no aparezca todo de una.
-        matriz[fila][i] = 0;
-     
-        print_mat(NULL,matriz,next);
-        espera(0.07);                              //Parte agregada para la RPI
-
-    }
-
-    int aux;
-    for (fil=fila; fil>0; fil--) {          // Este ciclo baja toda la batriz sobre la fila que se elimino en un bloque
-
-        for (col=0; col<COL; col++) {           // Podemos agregar delay cada vez que realiza este for para mostrar una animacion
-
-            aux = matriz[fil][col];
-            matriz[fil][col] = matriz[fil-1][col];
-            matriz[fil-1][col] = aux;
-        }
-    }
-}
-
-/*void print_mat (pieza_t* in_use, int matriz[FIL][COL])
-{
-    int i, j, k;
-    system("clear");
-    printf("--------------------------------\n");
-    for (i=4; i<FIL; i++) {
-        printf("|");
-        for (j=0; j<COL; j++) {
-            if (matriz[i][j]!=0) {
-                printf("███");
-            }
-            else { 
-                int print = 0;
-                for (k=0; k<4; k++) {
-                    if ( j == ((in_use->mat_bloque[0][k])+(in_use->coord_x)) && i == ((in_use->mat_bloque[1][k])+(in_use->coord_y))) {
-                        print=1;
-                    }
-                }
-                if (print==1) {
-                    printf("███");
-                }
-                else {
-                    printf("   ");
-                }
-            }
-        }
-        printf("|\n");
-    }
-    printf("--------------------------------");
-    printf("\n\n\n");
-}
- * */
 
 void setear_pieza(pieza_t* pieza, int mat[FIL][COL])
 {
@@ -429,26 +427,14 @@ int game_over(int matriz[FIL][COL])
     int j;
     
     for(j=0; j<COL; j++){
+        
         if(matriz[3][j] != 0)
         {
             return 1;
         }
-    
     }
     return 0;
 }
-
-/*
-void delay(int level)
-{
-    float number_of_seconds = 0.7 - ((float)(level - 1) * 0.07);
-    // Storing start time
-    clock_t start_time = clock();
-    // looping till required time is not achieved
-    while (clock() < start_time + number_of_seconds * CLOCKS_PER_SEC)
-        ;
-}
- * */
 
 void clear_mat(int mat[FIL][COL]){ //función que borra la matriz, podriamos hacerla general.
     
@@ -462,54 +448,97 @@ void clear_mat(int mat[FIL][COL]){ //función que borra la matriz, podriamos hac
 
 }
 
-void print_mat (pieza_t* in_use, int matriz[FIL][COL], pieza_t* next) {
-    int i, j, k;
-    dcoord_t coord;
+void top_scores(game_stats_t* jugador){
+    
+    //Leo el archivo, ordeno todos los datos y escribo uno "nuevo" con el mismo nombre
+    int i,j;
+    int c;
 
-    disp_clear();
-    if (next != NULL)
-    {       
-        for ( i = 0; i < 4; i++) //En esta parte imprimimos la pieza futura
-        {
-            coord.x = (next->mat_bloque[0][i]) + 11;
-            coord.y = (next->mat_bloque[1][i]) + 2;
-            disp_write(coord, D_ON);
-        }
-    }
-
-    for (i=4; i<FIL; i++) {
-        
-        for (j=0; j<COL; j++) {
-
-            if (matriz[i][j]!=0) {
-                coord.x = j;
-                coord.y = i-4;
-                disp_write(coord, D_ON);
-            }
-            else if(in_use != NULL){ 
-
-                int print = 0;
-                
-                for (k=0; k<4; k++) {
-                    if ( j == ((in_use->mat_bloque[0][k])+(in_use->coord_x)) && i == ((in_use->mat_bloque[1][k])+(in_use->coord_y))) {
-
-                        print=1;
-                    }
-                }
-                
-                coord.x = j;
-                coord.y = i-4;
-                
-                if (print==1) {
-                    disp_write(coord, D_ON);
-                }
-                else {
-                    disp_write(coord, D_OFF);
-                }
-            }
-        }
-        
+    jugador_top_t jugadores_top[11];
+    for (i = 0; i < 11; i++)
+    {
+        jugadores_top[i].name[0] ='N';
+        jugadores_top[i].name[1] ='A';
+        jugadores_top[i].name[2] ='N';
+        jugadores_top[i].score = 0;
+        jugadores_top[i].posicion_top=i;
     }
     
-    disp_update();
+    FILE* pfile1;
+    int aux=10;
+    
+    pfile1 = fopen("top_scores.txt", "r");
+    if (pfile1 == NULL) //Verificamos si no existía el archivo, en ese caso este puntaje sería el maximo pq es el primero
+    {
+        jugadores_top[0].score = jugador->score;
+        for (i = 0; i < 3; i++)
+        {      
+            jugadores_top[0].name[i] = jugador->nick[i];
+        }
+        pfile1 = fopen("top_scores.txt", "w");
+        if (pfile1 !=NULL) //vemos si este si lo pudo crear
+        {
+            fprintf(pfile1,"%ld %3.3s\n",jugadores_top[0].score,jugadores_top[0].name); //3.3 es para indicar minimo 3 caracteres, maximo 3
+            fclose(pfile1);
+        }
+        
+    }
+    else{ //esto es el caso en el que si existe, hay que leerlo, pasar la info a los array y luego ordenarlo con el nuevo jugador
+
+        while(!feof(pfile1)) //Hasta que no llegue al EOF seguimos leyendo
+        {
+            for ( i = 0; i < 10; i++) //lenamos los datos de los jugadores del 0 al 9
+            {
+                c = fgetc(pfile1); //Hasta que no llegue al EOF seguimos leyendo EL PRIMERO ES EL ULTIMO \n
+                c = fgetc(pfile1); //Asi que leo el segundo tambien
+                if ( c == EOF )
+                {
+                    aux = i;
+                    break;
+                }
+                else
+                {
+                    fseek(pfile1, -2,SEEK_CUR);
+                    fscanf (pfile1, "%ld", &(jugadores_top[i].score)); //Leo los datos y los acomodo en los array
+                    fscanf (pfile1, "%s", jugadores_top[i].name);
+                    jugadores_top[i].posicion_top=i;
+                }
+                
+            }
+            
+        }
+        fclose(pfile1);
+
+        jugadores_top[10].score = jugador->score; //meto los datos del jugador actual en el array para ordenarlo
+        for (i = 0; i < 3; i++)
+        {      
+            jugadores_top[10].name[i] = jugador->nick[i];
+        }
+        jugadores_top[10].posicion_top=10;
+
+        for ( i = 10; i >=0 ; i--) //recorro todos los jugadores
+        {
+           if (jugadores_top[10].score >= jugadores_top[i].score)
+           {
+               jugadores_top[10].posicion_top --;
+               jugadores_top[i].posicion_top ++;
+           } 
+        }        
+
+        pfile1 = fopen("top_scores.txt", "w");
+
+        for ( i = 0; i < aux+1; i++) //me voy a mover entre los primeros jugadores según el id de posicion que les corresponde
+        {
+            for (j = 0; j < 11; j++) //con esta recorro los jugadores
+            {
+                if (i == jugadores_top[j].posicion_top) //voy en orden imprimiendo
+                {
+                    fprintf(pfile1,"%ld %3.3s\n",jugadores_top[j].score,jugadores_top[j].name); //3.3 es para indicar minimo 3 caracteres, maximo 3
+                    break;
+                }
+                
+            }
+        }
+        fclose(pfile1);       
+    }
 }

@@ -81,6 +81,9 @@ int main(void) {
     al_flip_display();
     al_rest(1.0);
     
+    jugador.nick[0]='E';
+    jugador.nick[1]='Z';
+    jugador.nick[2]='E';
     // JUEGO
     unsigned long int time = 0;
     char end=0;
@@ -108,7 +111,7 @@ int main(void) {
             if(mover_pieza(&in_use, matriz, ABA)) //con la función de move, ya nos aseguramos que se pueda seguir bajando o no.
             {
                 setear_pieza(&in_use, matriz); //guardamos la pieza en la matriz
-                fila_completa(matriz, &jugador); //vemos si se completo una fila para sumar puntos y eso
+                fila_completa(matriz, &jugador, &to_use); //vemos si se completo una fila para sumar puntos y eso
                 in_use = to_use;
                 generador(&to_use, &jugador);    // genero la siguiente pieza 
                 print_mat_juego (&in_use,&to_use,matriz,font, &jugador);
@@ -121,10 +124,9 @@ int main(void) {
         
         if(game_over(matriz))
         {
+            top_scores(&jugador);
             game_over_allegro(event, event_queue, font, &end, &in_use, matriz, &jugador);
-        }
-        
-        
+        } 
     }
 
     // ELIMINO MEMORIA RESERVADA DINAMICAMENTE
@@ -245,7 +247,7 @@ void print_bordes_juego (void) {
             
             if ( col==0 || col== 11 || col== 16 || fil==0 || fil== 17 || ( col>11 && col<16 && fil==5))
             {
-                al_draw_filled_rounded_rectangle(TAM_BLOQUE*col,TAM_BLOQUE*fil,TAM_BLOQUE*(col+1),TAM_BLOQUE*(fil+1),5,5,DORADO);
+                al_draw_filled_rounded_rectangle(TAM_BLOQUE*col,TAM_BLOQUE*fil,TAM_BLOQUE*(col+1),TAM_BLOQUE*(fil+1),5,5,GRIS);
             }
         }
     }
@@ -297,32 +299,32 @@ void menu_pausa (ALLEGRO_EVENT event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_
         if (event.type == ALLEGRO_EVENT_KEY_DOWN)
             {
                 switch (event.keyboard.keycode)
-            {
-                case ALLEGRO_KEY_DOWN: 
-                    contador++;               
-                    break;
-                case ALLEGRO_KEY_UP:
-                    contador--;
-                    break;
-                case ALLEGRO_KEY_ENTER:
-                    end_menu=1;
-                    switch (contador%4)
-                    {
-                        case 0:             // Vuelve al juego
-                            break;
-                        case 1:
-                            *end=1;         // Termina el juego
-                            break;
-                        case 2:             // Top Scores
-                            break;
-                        case 3:    
-                            clear_mat(matriz);
-                            generador(in_use, jugador);
-                            init_jugador(jugador);
-                            clear_display();
-                            break;                        
-                    }
-                    break;
+                {
+                    case ALLEGRO_KEY_DOWN: 
+                        contador++;               
+                        break;
+                    case ALLEGRO_KEY_UP:
+                        contador--;
+                        break;
+                    case ALLEGRO_KEY_ENTER:
+                        end_menu=1;
+                        switch (contador%4)
+                        {
+                            case 0:             // Vuelve al juego
+                                break;
+                            case 1:
+                                *end=1;         // Termina el juego
+                                break;
+                            case 2:             // Top Scores
+                                break;
+                            case 3:    
+                                clear_mat(matriz);
+                                generador(in_use, jugador);
+                                init_jugador(jugador);
+                                clear_display();
+                                break;                        
+                        }
+                        break;
             }
             switch (contador%4)
             {

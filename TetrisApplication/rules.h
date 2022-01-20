@@ -34,6 +34,14 @@
 #define LEVEL9 300
 #define LEVEL10 360
 
+#define AMARILLO al_map_rgb(255,255,0)
+#define AZUL al_map_rgb(0,0,172)
+#define ROJO al_map_rgb(255,0,0)
+#define MORADO al_map_rgb(205,0,205)
+#define CYAN al_map_rgb(0,255,255)
+#define NARANJA al_map_rgb(255,120,0)
+#define VERDE al_map_rgb(0,255,0)
+#define GRIS al_map_rgb(120,120,120)
 
 typedef struct
 {
@@ -51,8 +59,16 @@ typedef struct
     int level;
     long int score;
     long int cant_piezas;
-    char* nick;
+    char nick [3];
 }game_stats_t;
+
+typedef struct 
+{
+    long int score;
+    char name[3];
+    int posicion_top;
+
+}jugador_top_t;
 
 #endif /* RULES_H */
 

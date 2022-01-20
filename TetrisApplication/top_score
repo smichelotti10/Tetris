@@ -1,5 +1,4 @@
 void top_scores(game_stats_t* jugador){
-    
     typedef struct 
     {
         long int score;
@@ -9,12 +8,8 @@ void top_scores(game_stats_t* jugador){
     }jugador_top_t;
     
     //Leo el archivo, ordeno todos los datos y escribo uno "nuevo" con el mismo nombre
-    int i,j,k;
+    int i,j;
     int c;
-    int flag_repetido;
-
-    long int top_scores[11] = {0,0,0,0,0,0,0,0,0,0,0} ;
-    //char name_top_scores[11][3];
 
     jugador_top_t jugadores_top[11];
     for (i = 0; i < 11; i++)
@@ -52,16 +47,18 @@ void top_scores(game_stats_t* jugador){
 
         while(!feof(pfile1)) //Hasta que no llegue al EOF seguimos leyendo
         {
-            for ( i = 0; i < 10; i++)
+            for ( i = 0; i < 10; i++) //lenamos los datos de los jugadores del 0 al 9
             {
-                c = fgetc(pfile1);
+                c = fgetc(pfile1); //Hasta que no llegue al EOF seguimos leyendo EL PRIMERO ES EL ULTIMO \n
+                c = fgetc(pfile1); //Asi que leo el segundo tambien
                 if ( c == EOF )
                 {
                     aux = i;
+                    printf("%d\n",aux);
                     break;
                 }
                 else{
-                    fseek(pfile1, -1,SEEK_CUR);
+                    fseek(pfile1, -2,SEEK_CUR);
                     fscanf (pfile1, "%ld", &(jugadores_top[i].score)); //Leo los datos y los acomodo en los array
                     fscanf (pfile1, "%s", jugadores_top[i].name);
                     jugadores_top[i].posicion_top=i;
@@ -80,64 +77,28 @@ void top_scores(game_stats_t* jugador){
         }
         jugadores_top[10].posicion_top=10;
 
-        for(i =0; i<aux; i++){ //meto los datos en un arreglo para ordenarlos
-        
-        top_scores[i] =  jugadores_top[i].score;
-        
+       
+        for ( i = 0; i < 11; i++)
+        {
+            printf("%ld %3.3s %d\n",jugadores_top[i].score,jugadores_top[i].name,jugadores_top[i].posicion_top ); //esto es para debug
         }
-        top_scores[10] =  jugadores_top[10].score;
-
-        for(i =0; i<11; i++){ //meto los datos en un arreglo para ordenarlos
-            printf("%ld ", top_scores[i]);
-        }
-        printf("\n");
-
-        qsort (top_scores, 11, sizeof(long int), compare); //aca ordena de mayor a menor los elementos de top_scores
-        
-        for(i =0; i<11; i++){ //meto los datos en un arreglo para ordenarlos
-            printf("%ld ", top_scores[i]);
-        }
-        printf("\n");
-
 
         printf("Asignando:\n");
-        for (i = 0; i < aux+1; i++) //ahora recorro la matriz en busqueda de los mismos puntajes para ordenar todos los jugadores
-        {
-            flag_repetido = 0;
-            
-            for ( k = i+1; k < 11; k++)
-            {
-                if (top_scores[i]==top_scores[k] && top_scores[k]!=0)
-                {
-                    flag_repetido++; //cuento las veces que se repute el numero que debo guardar a continuacion
-                }
-            }
-            
-            
-            for (j = 0; j < 11; j++) //con esta recorro los jugadores
-            {
-                if (top_scores[i] == jugadores_top[j].score && flag_repetido==0)
-                {
-                    jugadores_top[j].posicion_top = i;  //le asigno el lugar que le corresponde al jugador
-                    
-                    printf("%ld %3.3s %d\n",jugadores_top[j].score,jugadores_top[j].name,i );
-                    break;
-                }
-                else if (top_scores[i] == jugadores_top[j].score && flag_repetido!=0)
-                {
-                    printf("Entre al caso de flag repetido, el flag es: %d\n", flag_repetido);
 
-                    jugadores_top[j+flag_repetido].posicion_top = i;  //le asigno el lugar que le corresponde al jugador
-                    
-                    printf("%ld %3.3s %d\n",jugadores_top[j].score,jugadores_top[j+flag_repetido].name,i );
-                    flag_repetido--;
-                    break;
-                }
-                
-                
-            }
-            
+        for ( i = 10; i >=0 ; i--) //recorro todos los jugadores
+        {
+           if (jugadores_top[10].score >= jugadores_top[i].score)
+           {
+               jugadores_top[10].posicion_top --;
+               jugadores_top[i].posicion_top ++;
+           } 
         }
+        
+        for ( i = 0; i < 11; i++)
+        {
+            printf("%ld %3.3s %d\n",jugadores_top[i].score,jugadores_top[i].name,jugadores_top[i].posicion_top); //esto es para debug
+        }
+        
 
         pfile1 = fopen("top_scores.txt", "w");
 
@@ -158,10 +119,4 @@ void top_scores(game_stats_t* jugador){
     }
     
 
-}
-
-
-int compare (const void * a, const void * b)
-{
-  return ( *(long int*)b - *(long int*)a );
 }

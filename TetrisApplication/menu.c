@@ -5,19 +5,17 @@
 #include "termlib.h"
 #include "disdrv.h"
 #include "joydrv.h"
+#include "menu.h"
+#include "piezas.h"
 
 
 
-void print_option(int option);
-void print_flechas_horizontales(void);
-char get_option (void); 
 
-int main(void){
+
+int menu_pausa(void){
 
     char signal;
-    int option = 0;
-    joy_init();
-    disp_init();  
+    int option = 0;  
    print_option(option);
    while ( (signal = get_option()) != MENU)
    {   
@@ -54,18 +52,24 @@ int main(void){
         }
         
    }
-   return 0;
+   while (get_option())
+   {
+       ;
+   }
+   
+   return option;
 }
 
 void print_option(int option){
     int i, j, k, z, r; //indices que ayudan a la hora de imprimir
     dcoord_t coord; //variable para almacenar las coordenadas a imprimir
-    
+    disp_clear();
+
     switch (option)
     {
     case 0: //es el caso de jugar
 
-        disp_clear();
+        
         k = 13; //cantidad de leds prendidos en la fila mas alta
         z = 1; //altura a la cual quiero que empiece
         for ( i = 5; i < 12; i++) //me muevo en las columnas que imprimo
@@ -85,12 +89,10 @@ void print_option(int option){
             k = k-2;
         }
 
-        print_flechas_horizontales();
-
-        disp_update();
+        
         break;
     case 1: //es el caso de TOP scores
-        disp_clear();
+        
         for (j=4; j<11; j = j+2) //las columnas que imprimo
         {
             k = 6; //altura a la que comienzo a imprimir
@@ -134,12 +136,10 @@ void print_option(int option){
         coord.y = 7;
         disp_write(coord, D_OFF);
         
-        print_flechas_horizontales();
-
-        disp_update();
+        
         break;
     case 2: // es el caso de Abandonar Programa
-        disp_clear();
+        
         for (j=3; j<13; j=j+9) //las columnas que imprimo
         {
             k = 1; //altura desde la cual quiero imprimir hacia abajo
@@ -169,12 +169,10 @@ void print_option(int option){
         coord.y=8;
         disp_write(coord, D_ON);
 
-        print_flechas_horizontales();
-
-        disp_update();
+        
         break;
     case 3: //es el caso de reiniciar juego
-        disp_clear();
+        
         k = 9; //cantidad de leds prendidos en la fila mas alta
         z = 6; //altura a la cual quiero que empiece
         for ( i = 6; i < 11; i++) //me muevo en las columnas que imprimo
@@ -220,14 +218,13 @@ void print_option(int option){
             disp_write(coord, D_ON);
         }
 
-        print_flechas_horizontales();    
-
-        disp_update();
         break;
     default:
         break;
     }
+    print_flechas_horizontales();
 
+    disp_update();
 }
 
 void print_flechas_horizontales(void){
@@ -258,40 +255,106 @@ void print_flechas_horizontales(void){
         disp_write(coord, D_ON);
 }
 
-char get_option (void) {
-    
-    jcoord_t coordenada;
-    jswitch_t boton;
-    
-    // ANALIZA SI SE APRETÓ EL SWITCH
-    joy_update();    
-    boton = joy_get_switch();
-    
-    if (boton == J_PRESS) {
-        return MENU;
-    }    
-    
-    // ANALIZA SI SE MOVIO EL JOYSTICK (unsigned)((u<0)?-u:u)
-    joy_update();
-    coordenada = joy_get_coord();
-        
-    if ((coordenada.x > -75)&&(coordenada.x < 75)&&(coordenada.y > -75)&&(coordenada.y < 75)) {
-        return VACIO;
-    }
-    else {
-        if (((-coordenada.x)>(coordenada.y))&&((-coordenada.x)>(-coordenada.y))) {
-            return IZQ;
-        }
-        else if (((coordenada.x)>(coordenada.y))&&((coordenada.x)>(-coordenada.y))) {
-            return DER;
-        }
-        else if (((-coordenada.x)<=(-coordenada.y))&&((coordenada.x)<=(-coordenada.y))) {
-            return ABA;
-        }
-        else if (((-coordenada.x)<=(coordenada.y))&&((coordenada.x)<=(coordenada.y))) {
-            return ROTAR;
-        }
-    }
-    return VACIO;
+int menu_start(void){
 
+    char signal;
+    int option = 0;  
+   print_option(option);
+   while ( (signal = get_option()) != MENU)
+   {   
+        switch (signal)
+        {
+        case DER:
+             while ((get_option())) //esperamos a que vuelva para cambiar
+            {
+                ;
+            }
+                option++; 
+                option = (option)%3;
+                print_option(option);
+            
+            break;
+        case IZQ:
+            while ((get_option())) //esperamos a que vuelva para cambiar
+            {
+                ;
+            }
+                
+                if (option==0)
+                {
+                    option = 2;
+                }
+                else{
+                    option --;
+                }
+                print_option(option);
+            
+            break;
+        default:
+            break;
+        }
+        
+   }
+    while (get_option())
+    {
+       ;
+    }
+   
+   return option;
+}
+
+int menu_game_over(void){
+
+    char signal;
+    int option = 3;  
+   print_option(option);
+   while ( (signal = get_option()) != MENU)
+   {   
+        switch (signal)
+        {
+        case DER:
+             while ((get_option())) //esperamos a que vuelva para cambiar
+            {
+                ;
+            }
+                if (option == 2)
+                {
+                    option = 3;
+                }
+                else
+                {
+                    option = 2;
+                }
+                
+                print_option(option);
+            
+            break;
+        case IZQ:
+            while ((get_option())) //esperamos a que vuelva para cambiar
+            {
+                ;
+            }
+                
+                if (option==3)
+                {
+                    option = 2;
+                }
+                else{
+                    option = 3;
+                }
+                print_option(option);
+            
+            break;
+        default:
+            break;
+        }
+        
+   }
+
+   while (get_option())
+   {
+       ;
+   }
+   
+   return option;
 }

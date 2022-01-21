@@ -4,7 +4,7 @@
 
 #include "rules.h"
 #include "piezas.h"
-#include "menu.h"
+#include "menu_rpi.h""
 #include "raspi.h"
 
 #include "termlib.h"

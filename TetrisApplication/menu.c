@@ -1,12 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "rules.h"
+
 #include "termlib.h"
 #include "disdrv.h"
 #include "joydrv.h"
+
+#include "rules.h"
+#include "raspi.h"
 #include "menu.h"
-#include "piezas.h"
+
+
 
 
 
@@ -305,8 +309,9 @@ int menu_start(void){
 
 int menu_game_over(void){
 
+    
     char signal;
-    int option = 3;  
+    int option = 1;  
    print_option(option);
    while ( (signal = get_option()) != MENU)
    {   
@@ -317,17 +322,16 @@ int menu_game_over(void){
             {
                 ;
             }
-                if (option == 2)
+                if (option == 3)
                 {
-                    option = 3;
+                    option = 1;
                 }
-                else
-                {
-                    option = 2;
+                else{
+                    option++; 
+                    option = (option)%4;
                 }
-                
                 print_option(option);
-            
+
             break;
         case IZQ:
             while ((get_option())) //esperamos a que vuelva para cambiar
@@ -335,12 +339,12 @@ int menu_game_over(void){
                 ;
             }
                 
-                if (option==3)
+                if (option==1)
                 {
-                    option = 2;
+                    option = 3;
                 }
                 else{
-                    option = 3;
+                    option --;
                 }
                 print_option(option);
             
@@ -350,7 +354,6 @@ int menu_game_over(void){
         }
         
    }
-
    while (get_option())
    {
        ;

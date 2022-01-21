@@ -53,6 +53,7 @@ int main(void) {
             juego(&finish);
             break;
         case 1: //Top
+            print_top_scores();
             break;
         case 2: //Abandonar
             finish =1;
@@ -96,12 +97,12 @@ void juego(char* end_program){
             
             while(!check(&in_use, matriz) && !fin_partida && !(*end_program)){
                 
-                print_mat(&in_use, matriz, &next);
+                print_mat(&in_use, matriz, &next, jugador.level);
                 delay(jugador.level, &in_use, matriz, &next, end_program, &fin_partida);
                 if(mover_pieza(&in_use, matriz, ABA)) //con la función de mover, ya nos aseguramos que se pueda seguir bajando o no.
                 {
                     setear_pieza(&in_use, matriz); //guardamos la pieza en la matriz
-                    fila_completa(matriz, &jugador, &in_use, &next); //vemos si se completo una fila para sumar puntos y eso
+                    fila_completa(matriz, &jugador, &next); //vemos si se completo una fila para sumar puntos y eso
                     in_use = next; //igualamos la pieza que trabajamos a la siguiente
                     break;
                 }
@@ -111,24 +112,34 @@ void juego(char* end_program){
                 printf("GAME OVER\n Final Score: %ld\n Level: %d\n", jugador.score, jugador.level);
                 top_scores(&jugador);
                 print_game_over(); //imprimimos pantalla final
-                menu_option = menu_game_over();
-                switch (menu_option)
+                show_score(&jugador);
+                while (!fin_partida)
                 {
-                case 2: //terminar programa
-                    fin_partida = 1;
-                    *end_program =1;
-                    disp_clear();
-                    break;
-                case 3: //reiniciar partida
-                    fin_partida = 1;
-                    break;
-                default:
-                    break;
+                    menu_option = menu_game_over();
+                    switch (menu_option)
+                    {
+                    case 1: //mostrar TOP Scores
+                        print_top_scores();
+                        break;
+                    case 2: //terminar programa
+                        fin_partida = 1;
+                        *end_program =1;
+                        disp_clear();
+                        break;
+                    case 3: //reiniciar partida
+                        fin_partida = 1;
+                        break;
+                    default:
+                        break;
+                    }
                 }
-                
                 
             }
         
         }
     }
 }
+
+
+
+

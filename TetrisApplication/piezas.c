@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
 #include "rules.h"
 #include "piezas.h"
 
@@ -8,25 +9,24 @@
 #define ALLEGRO 1
 
 #ifndef PLATAFORMA    
-#define PLATAFORMA ALLEGRO
+#define PLATAFORMA RPI
 #endif
 
 #if PLATAFORMA == RPI
 
-#include "termlib.h"
-#include "disdrv.h"
-#include "joydrv.h"
+#include "raspi.h"
 
-void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next)
+void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int level)
 {
     int fil, col, i;
 
     for (i=0; i<COL; i++) {                 // Primero se va a limpiar la fila que se completo, podemos 
                                             // agregar un delay si queremos para que no aparezca todo de una.
         matriz[fila][i] = 0;
-  
-        print_mat(NULL,matriz,next);
+     
+        print_mat(NULL,matriz,next,level);
         espera(0.07);                              //Parte agregada para la RPI
+
     }
 
     int aux;
@@ -66,7 +66,8 @@ void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next)
     }
 }
 
-#endif 
+#endif
+
 
 void init_jugador(game_stats_t* jugador)
 {
@@ -76,7 +77,8 @@ void init_jugador(game_stats_t* jugador)
 
 }
 
-void generador(pieza_t * in_use, game_stats_t* jugador) {
+void generador(pieza_t * in_use, game_stats_t* jugador)
+{
     
     int aux;
     aux = rand();
@@ -114,7 +116,9 @@ void generador(pieza_t * in_use, game_stats_t* jugador) {
             jugador->level++;
             break;
         case LEVEL10:
-            jugador->level++;  
+            jugador->level++;
+            break;
+            
     }
     
     switch  (in_use->id)
@@ -207,37 +211,37 @@ void generador(pieza_t * in_use, game_stats_t* jugador) {
 
 int mover_pieza(pieza_t* in_use, int mat[FIL][COL], char direccion)
 {
-    pieza_t to_use = *in_use;
+pieza_t to_use = *in_use;
 
-    if(direccion == DER) //#define DER 'd'
-    {
-            (to_use.coord_x)++;
-            if(!check(&to_use,mat))
-            {
-                    *in_use = to_use;
-            }
-    }
-    else if (direccion == IZQ)
-    {
-            (to_use.coord_x)--;	
-            if(!check(&to_use,mat))
-            {
-                    *in_use = to_use;
-            }
-    }
-    else if (direccion == ABA)
-    {
-            (to_use.coord_y)++;
-            if(!check(&to_use,mat))
-            {
-                    *in_use = to_use;
-            }
-            else
-            {
-                return 1; //esto es por si llego al final o si se choca una pieza, avisa para que se setee.
-            }
-    }
-    return 0;
+if(direccion == DER) //#define DER 'd'
+{
+	(to_use.coord_x)++;
+	if(!check(&to_use,mat))
+	{
+		*in_use = to_use;
+	}
+}
+else if (direccion == IZQ)
+{
+	(to_use.coord_x)--;	
+	if(!check(&to_use,mat))
+	{
+		*in_use = to_use;
+	}
+}
+else if (direccion == ABA)
+{
+	(to_use.coord_y)++;
+	if(!check(&to_use,mat))
+	{
+		*in_use = to_use;
+	}
+        else
+        {
+            return 1; //esto es por si llego al final o si se choca una pieza, avisa para que se setee.
+        }
+}
+return 0;
 }
 
 int check(pieza_t* pieza, int mat[FIL][COL]){
@@ -267,19 +271,19 @@ int check(pieza_t* pieza, int mat[FIL][COL]){
     return 0;
 }
 
-void all_down(pieza_t* in_use,int matriz[FIL][COL]) {
-    
-    int contador;
+void all_down(pieza_t* in_use,int matriz[FIL][COL])
+{
+int contador;
 
-    for(contador = 0 ; contador < 20 ; contador++)
-    {
-            mover_pieza(in_use,matriz,ABA);
-    }
-        setear_pieza(in_use, matriz);
+for(contador = 0 ; contador < 20 ; contador++)
+{
+	mover_pieza(in_use,matriz,ABA);
+}
+    setear_pieza(in_use, matriz);
 }
 
-void rotar(pieza_t* in_use,int mat[FIL][COL]) {
-    
+void rotar(pieza_t* in_use,int mat[FIL][COL])
+{
     pieza_t to_use = *in_use;
     
 /*CREO UNA MATRIZ AUXILIAR PARA MANEJAR LOS DATOS DE LA ESTRUCTURA*/     
@@ -382,7 +386,7 @@ void fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next)
 
         } 
         if (bloques==10) {           // Si la fila esta completa llamo a la funcion push_mat_down para desplazar una fila
-            push_mat_down (matriz, fil, next);            // para abajo todas las filas de arriba a la que hay que eliminar
+            push_mat_down (matriz, fil, next, jugador->level);  //aca agregue jugador->level          // para abajo todas las filas de arriba a la que hay que eliminar
             cant ++;
         }
     }
@@ -405,6 +409,8 @@ void fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next)
 
 void espera(float number_of_seconds)
 {
+
+    //float miliseconds = number_of_seconds * 1000;
     // Storing start time
     clock_t start_time = clock();
 
@@ -427,11 +433,11 @@ int game_over(int matriz[FIL][COL])
     int j;
     
     for(j=0; j<COL; j++){
-        
         if(matriz[3][j] != 0)
         {
             return 1;
         }
+    
     }
     return 0;
 }
@@ -450,6 +456,7 @@ void clear_mat(int mat[FIL][COL]){ //función que borra la matriz, podriamos hac
 
 void top_scores(game_stats_t* jugador){
     
+    
     //Leo el archivo, ordeno todos los datos y escribo uno "nuevo" con el mismo nombre
     int i,j;
     int c;
@@ -464,6 +471,7 @@ void top_scores(game_stats_t* jugador){
         jugadores_top[i].posicion_top=i;
     }
     
+
     FILE* pfile1;
     int aux=10;
     
@@ -539,6 +547,9 @@ void top_scores(game_stats_t* jugador){
                 
             }
         }
-        fclose(pfile1);       
+        fclose(pfile1);        
+
     }
+    
+
 }

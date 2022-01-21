@@ -13,7 +13,7 @@
 
 
 
-void print_mat (pieza_t* in_use, int matriz[FIL][COL], pieza_t* next) {
+void print_mat (pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, long int level) {
     int i, j, k;
     dcoord_t coord;
 
@@ -61,6 +61,15 @@ void print_mat (pieza_t* in_use, int matriz[FIL][COL], pieza_t* next) {
         }
         
     }
+    if (level<10)
+    {
+        print_number(level,12,4);
+    }
+    else
+    {
+        print_letter(23,3,12,4);
+    }
+    
     
     disp_update();
 }
@@ -107,7 +116,7 @@ char get_option (void) {
 void delay(int level, pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, char* end_game, char* restart_game) {
     float number_of_seconds = 0.7 - ((float)((level) - 1) * 0.07);
     char opc;
-    char exit = 0;
+    char exit = 0, escape=0;
     char ABA_counter = 0; //esto es para ver si bajo 2 veces rapido
     int menu_option;
     // Storing start time
@@ -133,7 +142,7 @@ void delay(int level, pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, char
                     }
                     else{
                     mover_pieza(in_use, matriz, opc);
-                    print_mat(in_use, matriz, next);
+                    print_mat(in_use, matriz, next,level);
                     }
                                
                 break;
@@ -147,7 +156,7 @@ void delay(int level, pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, char
                     }
                 }
                     mover_pieza(in_use, matriz, opc);
-                    print_mat(in_use, matriz, next);
+                    print_mat(in_use, matriz, next,level);
                                
                 break;
             case ROTAR:
@@ -159,7 +168,7 @@ void delay(int level, pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, char
                     }
                 }
                     rotar(in_use, matriz);
-                    print_mat(in_use, matriz, next);
+                    print_mat(in_use, matriz, next,level);
                 
                 break;
             case MENU:
@@ -167,25 +176,32 @@ void delay(int level, pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, char
                 {
                     ;
                 }
-                menu_option = menu_pausa();
-                switch (menu_option)
+                while (!escape)
                 {
-                case 0: //reanudar juego
-                    
-                    break;
-                case 1: //Top Scores
-
-                    break;
-                case 2: //Abandonar el juego
-                    *end_game = 1;
-                    disp_clear();
-                    break;
-                case 3: //Reiniciar juego
-                    *restart_game = 1;
-                    break;
-                default:
-                    break;
+                    menu_option = menu_pausa();
+                    switch (menu_option)
+                    {
+                    case 0: //reanudar juego
+                        escape =1;
+                        break;
+                    case 1: //Top Scores
+                        print_top_scores();
+                        break;
+                    case 2: //Abandonar el juego
+                        escape =1;
+                        *end_game = 1;
+                        disp_clear();
+                        break;
+                    case 3: //Reiniciar juego
+                        escape =1;
+                        *restart_game = 1;
+                        break;
+                    default:
+                        break;
+                    }
                 }
+                
+                
                 break;
             default:
                 break;
@@ -1083,24 +1099,16 @@ void print_game_over(void){
     
 }
 
-
 void print_top_scores(void){
-    typedef struct 
-    {
-        long int score;
-        char name[3];
-        int posicion_top;
-
-    }jugador_top_t;
     
     //Leo el archivo, ordeno todos los datos y escribo uno "nuevo" con el mismo nombre
     int i,j;
-    int c;
+    int c,aux;
+    int signal =0;
 
     jugador_top_t jugadores_top[10];   
 
     FILE* pfile1;
-    int aux=10;
     
     pfile1 = fopen("top_scores.txt", "r");
     if (pfile1 != NULL) //Verificamos si no existía el archivo, en ese caso este puntaje sería el maximo pq es el primero
@@ -1128,19 +1136,363 @@ void print_top_scores(void){
             
         }
         fclose(pfile1);
-
-        for ( i = 0; i < aux; i++)
-        {
-            print_number(jugadores_top[i].score);
-        }
+        
+        i=0;
+        
+        int exit=0;
+        disp_clear();
+        print_number(jugadores_top[i].score,0,0);
         print_flechas_verticales(6);
 
+        while (!exit)
+        {   
+            signal=get_option();
+            switch (signal)
+            {
+            case ABA:
+                while ((get_option())) //esperamos a que vuelva para cambiar
+                {
+                    ;
+                }
+                    i++; 
+                    i = (i)%aux;
+                    disp_clear();
+                    print_number(jugadores_top[i].score,0,0);
+                    print_flechas_verticales(6);
+
+                break;
+            case ROTAR:
+                while ((get_option())) //esperamos a que vuelva para cambiar
+                {
+                    ;
+                }
+                    
+                    if (i==0)
+                    {
+                        i = aux-1;
+                    }
+                    else{
+                        i --;
+                    }
+                    disp_clear();
+                    print_number(jugadores_top[i].score,0,0);
+                    print_flechas_verticales(6);
+                
+                break;
+            case IZQ:
+                while ((get_option())) //esperamos a que vuelva para cambiar
+                {
+                    ;
+                }
+                exit=1;
+                break;
+            case MENU:
+                while ((get_option())) //esperamos a que vuelva para cambiar
+                {
+                    ;
+                }
+                disp_clear();
+                for(j=0; j<3; j++){
+                        print_letter(jugadores_top[i].name[j]-65,j,0,0); //el -65 es pq es un char y le paso un int a print_letter
+                    }
+
+                while (get_option()!= IZQ)
+                {
+                    ;
+                }
+
+                while (get_option()) //esperamos a que vuelva para avanzar
+                {
+                    ;
+                }
+                disp_clear();
+                print_number(jugadores_top[i].score,0,0);
+                print_flechas_verticales(6);
+                break;
+                
+                default:
+                break;
+            }
+                
+        }
+
+    }
+
+}
+
+void print_number(long int number, int offset__x, int offset_y){
+    dcoord_t coord;
+    
+    // To store the digit
+	// of the number N
+	int arr[20]; //un maximo de 20 digitos
+	int i = 0;
+	int j, r;
+    int offset_x;
+    int aux;
+    
+    if (number == 0) //verificamos si es 0 de entrada
+    {
+        arr[0] = 0;
+        i++;
+    }
+    else if (number>99999)
+    {
+        offset_y = -3;
     }
     
+
+	// Till number becomes 0
+	while (number != 0) {
+
+		// Extract the last digit of N
+		r = number % 10;
+
+		// Put the digit in arr[]
+		arr[i] = r;
+		i++;
+
+		// Update N to N/10 to extract
+		// next last digit
+		number = number / 10;
+	}
+
+	// Print the digit of N by traversing
+	// arr[] reverse
+    aux=0;
+	for (j = i - 1; j > -1; j--) {
+        offset_x = offset__x + aux*3;
+		switch (arr[j])
+        {
+            case 0:
+                coord.x= 0 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 6;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 8;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 6;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 8;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                break;
+
+                case 1:
+                coord.x= 1 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 6;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 8;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                break;
+        
+                case 2:
+                coord.x= 0 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 8;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 6;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                break;
+
+            case 3:
+                coord.x= 0 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 6;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 8;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                break;
+
+                case 4:
+                coord.x= 0 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 6;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 6;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 8;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                break;
+
+            case 5:
+                coord.x= 0 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 8;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 6;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                break;
+            
+            case 6:
+                coord.x= 0 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 8;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 6;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 8;
+                disp_write(coord, D_ON);
+                break;
+
+            case 7:
+                coord.x= 0 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 6;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 8;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                break;
+
+            case 8:
+                coord.x= 0 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 6;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 8;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 6;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 8;
+                disp_write(coord, D_ON);
+                coord.x= 2 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                break;
+
+            case 9:
+                coord.x= 0 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 0 + offset_x; coord.y= offset_y + 6;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 5;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 6;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 7;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 8;
+                disp_write(coord, D_ON);
+                coord.x= 1 + offset_x; coord.y= offset_y + 9;
+                disp_write(coord, D_ON);
+                break;
+
+        default:
+            break;
+        }
+        aux++;
+        if (aux == 5)
+        {
+            aux = 0;
+            offset_y = 4;
+        }
+        
+    }
+
+    disp_update();
+}
+
+void show_score(game_stats_t* jugador){
+
+    disp_clear();
+    print_number(jugador->score,0,0);
+
+    while (get_option()!=MENU)
+    {
+        ;
+    }
+    while (get_option())
+    {
+        ;
+    }
     
 
 }
 
-void print_number(long int number){
-    
-}

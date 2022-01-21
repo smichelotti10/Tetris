@@ -48,8 +48,8 @@ typedef struct
     char id;  //1 blue ricky, 2 rhode island 
     unsigned char position;
 
-    char coord_x;
-    char coord_y;
+    signed char coord_x;
+    signed char coord_y;
 
     char mat_bloque[2][4]; //matriz de las coordenadas de los bloques, X es la fila 0 e Y la fila 1
 }pieza_t;

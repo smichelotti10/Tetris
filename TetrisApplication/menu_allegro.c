@@ -171,8 +171,8 @@ void game_over_allegro (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, 
     
     clear_display();
     al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*4, ALLEGRO_ALIGN_CENTRE, "GAME OVER");
-    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*6, ALLEGRO_ALIGN_RIGHT, "YOUR SCORE: ");
-    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*6, ALLEGRO_ALIGN_LEFT, score);
+    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2 + TAM_BLOQUE*3, TAM_BLOQUE*6, ALLEGRO_ALIGN_RIGHT, "YOUR SCORE: ");
+    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2 + TAM_BLOQUE*4, TAM_BLOQUE*6, ALLEGRO_ALIGN_LEFT, score);
     al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "HIGH SCORES");
     al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "RESTART GAME");
     al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*13, ALLEGRO_ALIGN_CENTRE, "QUIT");
@@ -216,8 +216,8 @@ void game_over_allegro (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, 
                 case 0:
                     clear_display();
                     al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*4, ALLEGRO_ALIGN_CENTRE, "GAME OVER");
-                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*6, ALLEGRO_ALIGN_RIGHT, "YOUR SCORE: ");
-                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*6, ALLEGRO_ALIGN_LEFT, score);
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2 + TAM_BLOQUE*3, TAM_BLOQUE*6, ALLEGRO_ALIGN_RIGHT, "YOUR SCORE: ");
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2 + TAM_BLOQUE*4, TAM_BLOQUE*6, ALLEGRO_ALIGN_LEFT, score);
                     al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "HIGH SCORES");
                     al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "RESTART GAME");
                     al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*13, ALLEGRO_ALIGN_CENTRE, "QUIT");
@@ -226,8 +226,8 @@ void game_over_allegro (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, 
                 case 1:
                     clear_display();
                     al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*4, ALLEGRO_ALIGN_CENTRE, "GAME OVER");
-                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*6, ALLEGRO_ALIGN_RIGHT, "YOUR SCORE: ");
-                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*6, ALLEGRO_ALIGN_LEFT, score);
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2 + TAM_BLOQUE*3, TAM_BLOQUE*6, ALLEGRO_ALIGN_RIGHT, "YOUR SCORE: ");
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2 + TAM_BLOQUE*4, TAM_BLOQUE*6, ALLEGRO_ALIGN_LEFT, score);
                     al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "HIGH SCORES");
                     al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "RESTART GAME");
                     al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*13, ALLEGRO_ALIGN_CENTRE, "QUIT");
@@ -236,8 +236,8 @@ void game_over_allegro (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, 
                 case 2:
                     clear_display();
                     al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*4, ALLEGRO_ALIGN_CENTRE, "GAME OVER");
-                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*6, ALLEGRO_ALIGN_RIGHT, "YOUR SCORE: ");
-                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*6, ALLEGRO_ALIGN_LEFT, score);
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2 + TAM_BLOQUE*3, TAM_BLOQUE*6, ALLEGRO_ALIGN_RIGHT, "YOUR SCORE: ");
+                    al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2 + TAM_BLOQUE*4, TAM_BLOQUE*6, ALLEGRO_ALIGN_LEFT, score);
                     al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "HIGH SCORES");
                     al_draw_text(font, al_map_rgb(255,255,255), ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "RESTART GAME");
                     al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*13, ALLEGRO_ALIGN_CENTRE, "QUIT");

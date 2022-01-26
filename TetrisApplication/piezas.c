@@ -9,7 +9,7 @@
 #define ALLEGRO 1
 
 #ifndef PLATAFORMA    
-#define PLATAFORMA RPI
+#define PLATAFORMA ALLEGRO
 #endif
 
 #if PLATAFORMA == RPI
@@ -43,15 +43,13 @@ void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int leve
 
 #elif PLATAFORMA == ALLEGRO
 
-void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next)
-{
+void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int level) {
+    
     int fil, col, i;
 
     for (i=0; i<COL; i++) {                 // Primero se va a limpiar la fila que se completo, podemos 
                                             // agregar un delay si queremos para que no aparezca todo de una.
         matriz[fila][i] = 0;
-  
-        //AGREGAR PRINT MAT DE ALLEGRO
     }
 
     int aux;
@@ -469,18 +467,16 @@ void top_scores(game_stats_t* jugador){
         jugadores_top[i].name[2] ='N';
         jugadores_top[i].score = 0;
         jugadores_top[i].posicion_top=i;
+        jugadores_top[i].vacio=1;
     }
-    
 
     FILE* pfile1;
-    int aux=10;
     
     pfile1 = fopen("top_scores.txt", "r");
     if (pfile1 == NULL) //Verificamos si no existía el archivo, en ese caso este puntaje sería el maximo pq es el primero
     {
         jugadores_top[0].score = jugador->score;
-        for (i = 0; i < 3; i++)
-        {      
+        for (i = 0; i < 3; i++) {           
             jugadores_top[0].name[i] = jugador->nick[i];
         }
         pfile1 = fopen("top_scores.txt", "w");
@@ -489,19 +485,17 @@ void top_scores(game_stats_t* jugador){
             fprintf(pfile1,"%ld %3.3s\n",jugadores_top[0].score,jugadores_top[0].name); //3.3 es para indicar minimo 3 caracteres, maximo 3
             fclose(pfile1);
         }
-        
     }
-    else{ //esto es el caso en el que si existe, hay que leerlo, pasar la info a los array y luego ordenarlo con el nuevo jugador
+    else { //esto es el caso en el que si existe, hay que leerlo, pasar la info a los array y luego ordenarlo con el nuevo jugador
 
         while(!feof(pfile1)) //Hasta que no llegue al EOF seguimos leyendo
         {
-            for ( i = 0; i < 10; i++) //lenamos los datos de los jugadores del 0 al 9
+            for ( i = 0; i < 10; i++) //leemos los datos de los jugadores del 0 al 9
             {
                 c = fgetc(pfile1); //Hasta que no llegue al EOF seguimos leyendo EL PRIMERO ES EL ULTIMO \n
                 c = fgetc(pfile1); //Asi que leo el segundo tambien
                 if ( c == EOF )
                 {
-                    aux = i;
                     break;
                 }
                 else
@@ -510,10 +504,9 @@ void top_scores(game_stats_t* jugador){
                     fscanf (pfile1, "%ld", &(jugadores_top[i].score)); //Leo los datos y los acomodo en los array
                     fscanf (pfile1, "%s", jugadores_top[i].name);
                     jugadores_top[i].posicion_top=i;
+                    jugadores_top[i].vacio=0;
                 }
-                
-            }
-            
+            }   
         }
         fclose(pfile1);
 
@@ -523,33 +516,29 @@ void top_scores(game_stats_t* jugador){
             jugadores_top[10].name[i] = jugador->nick[i];
         }
         jugadores_top[10].posicion_top=10;
+        jugadores_top[10].vacio=0;
 
-        for ( i = 10; i >=0 ; i--) //recorro todos los jugadores
-        {
-           if (jugadores_top[10].score >= jugadores_top[i].score)
-           {
-               jugadores_top[10].posicion_top --;
-               jugadores_top[i].posicion_top ++;
-           } 
-        }        
+        for (i=10; i >=0 ; i--) //recorro todos los jugadores
+        {  
+            if (jugadores_top[10].score >= jugadores_top[i].score)
+            {
+                jugadores_top[10].posicion_top --;
+                jugadores_top[i].posicion_top ++;
+            } 
+        }       
 
         pfile1 = fopen("top_scores.txt", "w");
-
-        for ( i = 0; i < aux+1; i++) //me voy a mover entre los primeros jugadores según el id de posicion que les corresponde
+        for (i = 0; i < 10; i++) //me voy a mover entre los primeros jugadores según el id de posicion que les corresponde
         {
-            for (j = 0; j < 11; j++) //con esta recorro los jugadores
+            for (j = 0; j < 11; j++) //con esta recorro el arreglo donde estn los jugadores
             {
-                if (i == jugadores_top[j].posicion_top) //voy en orden imprimiendo
+                if (!(jugadores_top[j].vacio) && (i == jugadores_top[j].posicion_top)) //voy en orden imprimiendo
                 {
                     fprintf(pfile1,"%ld %3.3s\n",jugadores_top[j].score,jugadores_top[j].name); //3.3 es para indicar minimo 3 caracteres, maximo 3
                     break;
                 }
-                
             }
         }
         fclose(pfile1);        
-
     }
-    
-
 }

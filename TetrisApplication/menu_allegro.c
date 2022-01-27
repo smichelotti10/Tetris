@@ -360,8 +360,8 @@ void print_high_scores (ALLEGRO_FONT* font, ALLEGRO_EVENT *event, ALLEGRO_EVENT_
             }            
         }
         fclose(pfile1);
-    }
-    al_flip_display();
+        al_flip_display();
+    } 
     
     int end=0;
     

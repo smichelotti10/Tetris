@@ -4,7 +4,7 @@
 
 #include "rules.h"
 #include "piezas.h"
-#include "menu_rpi.h""
+#include "menu_rpi.h"
 #include "raspi.h"
 
 #include "termlib.h"
@@ -1115,7 +1115,7 @@ void print_top_scores(void){
     {
         while(!feof(pfile1)) //Hasta que no llegue al EOF seguimos leyendo
         {
-            for ( i = 0; i < 10; i++) //lenamos los datos de los jugadores del 0 al 9
+            for ( i = 0; i <= 10; i++) //lenamos los datos de los jugadores del 0 al 9
             {
                 c = fgetc(pfile1); //Hasta que no llegue al EOF seguimos leyendo EL PRIMERO ES EL ULTIMO \n
                 c = fgetc(pfile1); //Asi que leo el segundo tambien
@@ -1136,7 +1136,7 @@ void print_top_scores(void){
             
         }
         fclose(pfile1);
-        
+        printf("aux =%d\n", aux);
         i=0;
         
         int exit=0;

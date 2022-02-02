@@ -1217,6 +1217,24 @@ void print_top_scores(void){
         }
 
     }
+    else
+    {
+        disp_clear();
+        print_letter('N'-65,3,0,0);
+        print_letter('U'-65,3,4,0);
+        print_letter('L'-65,3,8,0);
+        print_letter('L'-65,3,12,0);
+        while (get_option() != IZQ)
+        {
+            ;
+        }
+        while (get_option())
+        {
+            ;
+        }
+        
+        
+    }
 
 }
 

@@ -5,14 +5,11 @@
 #include "rules.h"
 #include "piezas.h"
 
-#define RPI 0
-#define ALLEGRO 1
 
-#ifndef PLATAFORMA    
-#define PLATAFORMA RPI
-#endif
 
-#if PLATAFORMA == RPI
+
+
+#ifdef RPI
 
 #include "raspi.h"
 
@@ -40,8 +37,9 @@ void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int leve
         }
     }
 }
+#endif
 
-#elif PLATAFORMA == ALLEGRO
+#ifdef ALLEGRO
 
 void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next)
 {

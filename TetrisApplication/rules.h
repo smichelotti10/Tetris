@@ -42,6 +42,7 @@
 #define NARANJA al_map_rgb(255,120,0)
 #define VERDE al_map_rgb(0,255,0)
 #define GRIS al_map_rgb(120,120,120)
+#define BLANCO al_map_rgb(255,255,255)
 
 typedef struct
 {
@@ -67,7 +68,8 @@ typedef struct
     long int score;
     char name[3];
     int posicion_top;
-
+    char vacio;
+    
 }jugador_top_t;
 
 #endif /* RULES_H */

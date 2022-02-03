@@ -61,7 +61,7 @@ int main(void) {
         return 0;
     }
      
-    al_draw_text(font, al_map_rgb(255, 255, 255), ANCHO_PANTALLA/2, ALTO_PANTALLA/2, ALLEGRO_ALIGN_CENTRE, "TETRIS");
+    al_draw_text(font, BLANCO, ANCHO_PANTALLA/2, ALTO_PANTALLA/2, ALLEGRO_ALIGN_CENTRE, "TETRIS");
     al_flip_display();
     al_rest(1.0);
     
@@ -76,7 +76,7 @@ int main(void) {
         print_mat_juego (&in_use, &to_use,matriz,font, &jugador);
         if (time==0)
         {
-            time = (0.7-(jugador.level-1)*0.069)*10000000;
+            time = (0.7-(jugador.level-1)*0.069)*CLOCKS_PER_SEC*70;
         }
 
         while (--time) {

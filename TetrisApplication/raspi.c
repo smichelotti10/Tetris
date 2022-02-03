@@ -7,7 +7,6 @@
 #include "menu_rpi.h"
 #include "raspi.h"
 
-#include "termlib.h"
 #include "disdrv.h"
 #include "joydrv.h"
 
@@ -113,8 +112,8 @@ char get_option (void) {
 
 }
 
-void delay(int level, pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, char* end_game, char* restart_game) {
-    float number_of_seconds = 0.7 - ((float)((level) - 1) * 0.07);
+void delay(game_stats_t* jugador, pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, char* end_game, char* restart_game) {
+    float number_of_seconds = 0.35 - ((float)((jugador->level) - 1) * 0.035);
     char opc;
     char exit = 0, escape=0;
     char ABA_counter = 0; //esto es para ver si bajo 2 veces rapido
@@ -137,12 +136,12 @@ void delay(int level, pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, char
                 }
                     ABA_counter++;
                     if (ABA_counter >=2)
-                    {
-                        all_down(in_use, matriz);
+                    {   
+                        jugador->score += all_down(in_use, matriz) * jugador->level * 3; //el *3 es un multiplicador random
                     }
                     else{
                     mover_pieza(in_use, matriz, opc);
-                    print_mat(in_use, matriz, next,level);
+                    print_mat(in_use, matriz, next,jugador->level);
                     }
                                
                 break;
@@ -156,7 +155,7 @@ void delay(int level, pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, char
                     }
                 }
                     mover_pieza(in_use, matriz, opc);
-                    print_mat(in_use, matriz, next,level);
+                    print_mat(in_use, matriz, next,jugador->level);
                                
                 break;
             case ROTAR:
@@ -168,7 +167,7 @@ void delay(int level, pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, char
                     }
                 }
                     rotar(in_use, matriz);
-                    print_mat(in_use, matriz, next,level);
+                    print_mat(in_use, matriz, next,jugador->level);
                 
                 break;
             case MENU:

@@ -16,12 +16,12 @@
 #include <time.h>
 
 #include "rules.h"
-#include "termlib.h"
+
 #include "disdrv.h"
 #include "joydrv.h"
 
 #include "piezas.h"
-#include "menu_rpi.h""
+#include "menu_rpi.h"
 #include "raspi.h"
 
 
@@ -85,7 +85,7 @@ void juego(char* end_program){
         clear_mat(matriz);
         init_jugador(&jugador); //llamamo a la función que inicializa las stats del juego  
         
-        jugador.level = 7;
+        //jugador.level = 10;
         
 
         char fin_partida = 0;
@@ -98,7 +98,7 @@ void juego(char* end_program){
             while(!check(&in_use, matriz) && !fin_partida && !(*end_program)){
                 
                 print_mat(&in_use, matriz, &next, jugador.level);
-                delay(jugador.level, &in_use, matriz, &next, end_program, &fin_partida);
+                delay(&jugador, &in_use, matriz, &next, end_program, &fin_partida);
                 if(mover_pieza(&in_use, matriz, ABA)) //con la función de mover, ya nos aseguramos que se pueda seguir bajando o no.
                 {
                     setear_pieza(&in_use, matriz); //guardamos la pieza en la matriz

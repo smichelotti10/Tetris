@@ -22,8 +22,8 @@ main_allegro.o: main_allegro.c rules.h piezas.h menu_allegro.h juego_allegro.h
 menu_allegro.o: menu_allegro.c menu_allegro.h
 	gcc -c -Wall menu_allegro.c
 clean:
-	rm *i.o
-	rm *o.o
-	rm *s.o
-	rm piezas*.o
+	rm -f *i.o
+	rm -f *o.o
+	rm -f *s.o
+	rm -f piezas*.o
 	

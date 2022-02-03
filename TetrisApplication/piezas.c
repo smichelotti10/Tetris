@@ -9,7 +9,7 @@
 #define ALLEGRO 1
 
 #ifndef PLATAFORMA    
-#define PLATAFORMA ALLEGRO
+#define PLATAFORMA RPI
 #endif
 
 #if PLATAFORMA == RPI
@@ -43,13 +43,15 @@ void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int leve
 
 #elif PLATAFORMA == ALLEGRO
 
-void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int level) {
-    
+void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next)
+{
     int fil, col, i;
 
     for (i=0; i<COL; i++) {                 // Primero se va a limpiar la fila que se completo, podemos 
                                             // agregar un delay si queremos para que no aparezca todo de una.
         matriz[fila][i] = 0;
+  
+        //AGREGAR PRINT MAT DE ALLEGRO
     }
 
     int aux;
@@ -89,32 +91,18 @@ void generador(pieza_t * in_use, game_stats_t* jugador)
     jugador->cant_piezas++;
     switch (jugador->cant_piezas){
         
-        case LEVEL2:
-            jugador->level++;
-            break;
-        case LEVEL3:
-            jugador->level++;
-            break;
-        case LEVEL4:
-            jugador->level++;
-            break;
-        case LEVEL5:
-            jugador->level++;
-            break;
-        case LEVEL6:
-            jugador->level++;
-            break;
-        case LEVEL7:
-            jugador->level++;
-            break;
-        case LEVEL8:
-            jugador->level++;
-            break;
+        case LEVEL2:  
+        case LEVEL3:    
+        case LEVEL4:   
+        case LEVEL5:  
+        case LEVEL6: 
+        case LEVEL7: 
+        case LEVEL8:  
         case LEVEL9:
-            jugador->level++;
-            break;
         case LEVEL10:
             jugador->level++;
+            break;
+        default:
             break;
             
     }
@@ -269,15 +257,17 @@ int check(pieza_t* pieza, int mat[FIL][COL]){
     return 0;
 }
 
-void all_down(pieza_t* in_use,int matriz[FIL][COL])
+unsigned char all_down(pieza_t* in_use,int matriz[FIL][COL])
 {
 int contador;
-
+pieza_t aux = *in_use;
 for(contador = 0 ; contador < 20 ; contador++)
 {
 	mover_pieza(in_use,matriz,ABA);
+    
 }
     setear_pieza(in_use, matriz);
+    return ((in_use->coord_y) - aux.coord_y);
 }
 
 void rotar(pieza_t* in_use,int mat[FIL][COL])

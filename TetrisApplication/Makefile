@@ -1,4 +1,4 @@
-ALLEGRO_LIBRARIES =  allegro-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5 allegro_dialog-5
+ALLEGRO_LIBRARIES =  allegro-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5 allegro_dialog-5 allegro_image-5
 ALLEGRO_FLAGS = $(shell pkg-config --cflags --libs $(ALLEGRO_LIBRARIES))
 
 tetrisR:main_Rpi.o menu_rpi.o raspi.o piezasR.o

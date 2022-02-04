@@ -331,9 +331,10 @@ void rotar(pieza_t* in_use,int mat[FIL][COL])
         }
     }
 }
-void fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next)
+int fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next)
 {
     int fil, col, bloques, cant=0;
+    int resto=0;
     for(fil=0; fil<FIL; fil++) {
         for(col=0, bloques=0; col<COL; col++) {   // recorro cada fila de la matriz analizando si la fila esta completa o no.
             if (matriz[fil][col]!=0) {
@@ -343,6 +344,7 @@ void fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next)
         if (bloques==10) {           // Si la fila esta completa llamo a la funcion push_mat_down para desplazar una fila
             push_mat_down (matriz, fil, next, jugador->level);  //aca agregue jugador->level          // para abajo todas las filas de arriba a la que hay que eliminar
             cant ++;
+	    resto=1;
         }
     }
     switch (cant){
@@ -360,6 +362,7 @@ void fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next)
             jugador->score +=(int) (800 * (1 + (((double)(jugador->level)-1)/10)));
             break;
     }
+	return resto;
 }
 void espera(float number_of_seconds)
 {

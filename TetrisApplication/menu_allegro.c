@@ -1,6 +1,6 @@
 #include    "menu_allegro.h"
 
-void menu_inicio (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador) {
+void menu_inicio (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, ALLEGRO_SAMPLE * sound, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador) {
     
     unsigned char contador = 0;
     char end_menu=0;
@@ -16,6 +16,7 @@ void menu_inicio (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGR
         al_wait_for_event(event_queue, event);
         if (event->type == ALLEGRO_EVENT_KEY_DOWN)
             {
+		al_play_sample(sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
                 switch (event->keyboard.keycode)
                 {
                     case ALLEGRO_KEY_DOWN: 
@@ -89,7 +90,7 @@ void menu_inicio (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGR
     }
 }
 
-void menu_pausa (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador) {
+void menu_pausa (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, ALLEGRO_SAMPLE*sound, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador) {
    
     unsigned char contador = 0;
     char end_menu=0;
@@ -105,6 +106,7 @@ void menu_pausa (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO
         al_wait_for_event(event_queue, event);
         if (event->type == ALLEGRO_EVENT_KEY_DOWN)
             {
+		al_play_sample(sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
                 switch (event->keyboard.keycode)
                 {
                     case ALLEGRO_KEY_DOWN: 

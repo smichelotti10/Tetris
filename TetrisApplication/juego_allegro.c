@@ -115,7 +115,7 @@ void clear_display (void) {
     al_clear_to_color(al_map_rgb(0,0,0));
 }
 
-void get_input (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, pieza_t* in_use, int mat[FIL][COL], char*end, ALLEGRO_FONT* font, game_stats_t* jugador) {
+void get_input (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_SAMPLE*sound, pieza_t* in_use, int mat[FIL][COL], char*end, ALLEGRO_FONT* font, game_stats_t* jugador) {
        
     switch (event->keyboard.keycode)
     {
@@ -135,7 +135,7 @@ void get_input (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, pieza_t*
             jugador->score+=((jugador->level)*(all_down(in_use, mat))*3);
             break;
         case ALLEGRO_KEY_ESCAPE:
-            menu_pausa(event, event_queue, font, end, in_use, mat, jugador);                 // PLAY/PAUSE, ESCAPE, TOP-SCORES, REINICIAR JUEGO
+            menu_pausa(event, event_queue, font, sound, end, in_use, mat, jugador);                 // PLAY/PAUSE, ESCAPE, TOP-SCORES, REINICIAR JUEGO
             break;
             
     }

@@ -7,6 +7,7 @@
 #include    <allegro5/allegro.h>
 #include    <allegro5/allegro_native_dialog.h>
 
+
 int main(void) {
 
     //INICIALIZO ALLEGRO
@@ -24,6 +25,9 @@ int main(void) {
     ALLEGRO_EVENT_QUEUE *event_queue;
     ALLEGRO_EVENT event;
     ALLEGRO_FONT* font;
+    ALLEGRO_SAMPLE * sound1;
+    ALLEGRO_SAMPLE * sound2;
+    ALLEGRO_SAMPLE * sound3;
     
     //INICIALIZO LAS VARIABLES Y BIBLIOTECAS
     srand(time(NULL)); //genero una semilla randomizada
@@ -33,10 +37,12 @@ int main(void) {
     generador(&to_use, &jugador);
     
     al_install_keyboard();
+    al_install_audio();
     al_init_primitives_addon();
     al_init_font_addon();
     al_init_ttf_addon();
     al_init_image_addon();
+    al_init_acodec_addon();
     
     event_queue = al_create_event_queue();
     al_register_event_source(event_queue, al_get_keyboard_event_source());  
@@ -45,6 +51,10 @@ int main(void) {
     al_set_window_title(display, "Tetris");
     al_set_window_position(display, 200, 5);
     font = al_load_ttf_font("nombre.ttf", 36, 0);
+    sound1=al_load_sample("efectotecla.wav");
+    sound2=al_load_sample("efectocae.wav");
+    sound3=al_load_sample("efectofila.wav");
+    al_reserve_samples(3);
     
     if(!display) {
         al_show_native_message_box(NULL,NULL,NULL, "No se pudo crear un display", NULL, 0);
@@ -58,6 +68,8 @@ int main(void) {
         al_destroy_display(display);
         al_destroy_event_queue(event_queue);
         al_destroy_font(font);
+        al_destroy_sample(sound1);
+        al_destroy_sample(sound2);
         
         return 0;
     }
@@ -70,7 +82,7 @@ int main(void) {
     unsigned long int time = 0;
     char end=0;
     
-    menu_inicio(&event, event_queue, font, &end, &in_use, matriz, &jugador);
+    menu_inicio(&event, event_queue, font, sound1, &end, &in_use, matriz, &jugador);
     
     while(!end) {
         
@@ -92,8 +104,12 @@ int main(void) {
         {
             if(mover_pieza(&in_use, matriz, ABA)) //con la función de move, ya nos aseguramos que se pueda seguir bajando o no.
             {
+		al_play_sample(sound2, 1.0, 0.0, 1.5, ALLEGRO_PLAYMODE_ONCE, 0);
                 setear_pieza(&in_use, matriz); //guardamos la pieza en la matriz
-                fila_completa(matriz, &jugador, &to_use); //vemos si se completo una fila para sumar puntos y eso
+                int var = fila_completa(matriz, &jugador, &to_use); //vemos si se completo una fila para sumar puntos y eso
+		if(var==1){
+                	al_play_sample(sound3, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+		}
                 in_use = to_use;
                 generador(&to_use, &jugador);    // genero la siguiente pieza 
                 print_mat_juego (&in_use,&to_use,matriz,font, &jugador);
@@ -101,7 +117,7 @@ int main(void) {
         }
         else 
         {
-            get_input(&event, event_queue, &in_use,matriz, &end, font, &jugador);
+            get_input(&event, event_queue, sound1, &in_use,matriz, &end, font, &jugador);
         }
         
         if(game_over(matriz))

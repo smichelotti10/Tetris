@@ -22,7 +22,7 @@ int check(pieza_t* pieza, int mat[FIL][COL]);
 void setear_pieza(pieza_t* in_use, int matriz[FIL][COL]);
 unsigned char all_down(pieza_t* in_use,int matriz[FIL][COL]);
 void rotar(pieza_t* in_use,int mat[FIL][COL]);
-void fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next);
+int fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next);
 void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int level);
 int game_over(int matriz[FIL][COL]);
 void espera(float number_of_seconds);

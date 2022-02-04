@@ -15,39 +15,40 @@ void menu_inicio (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGR
     while(!end_menu) {
         al_wait_for_event(event_queue, event);
         if (event->type == ALLEGRO_EVENT_KEY_DOWN)
+        {
+            switch (event->keyboard.keycode)
             {
-		al_play_sample(sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
-                switch (event->keyboard.keycode)
-                {
-                    case ALLEGRO_KEY_DOWN: 
-                        contador++;               
-                        break;
-                    case ALLEGRO_KEY_UP:
-                        contador--;
-                        break;
-                    case ALLEGRO_KEY_ENTER:
-                        switch (contador%4)
-                        {
-                            case 0:             // Inicia el juego
-                                end_menu=1;
-                                clear_mat(matriz);
-                                generador(in_use, jugador);
-                                init_jugador(jugador);
-                                clear_display();
-                                ask_name(jugador, event, event_queue, font);
-                                break;
-                            case 1:             // Top Scores
-                                print_high_scores(font, event, event_queue);
-                                break;
-                            case 2:
-                                commands(font, event, event_queue);
-                                break;
-                            case 3:      
-                                end_menu=1;
-                                *end=1;         // Termina el juego
-                                break;                        
-                        }
-                        break;
+                case ALLEGRO_KEY_DOWN:
+                    al_play_sample(sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+                    contador++;
+                    break;
+                case ALLEGRO_KEY_UP:
+                    al_play_sample(sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+                    contador--;
+                    break;
+                case ALLEGRO_KEY_ENTER:
+                    switch (contador%4)
+                    {
+                        case 0:             // Inicia el juego
+                            end_menu=1;
+                            clear_mat(matriz);
+                            generador(in_use, jugador);
+                            init_jugador(jugador);
+                            clear_display();
+                            ask_name(jugador, event, event_queue, font);
+                            break;
+                        case 1:             // Top Scores
+                            print_high_scores(font, event, event_queue);
+                            break;
+                        case 2:
+                            commands(font, event, event_queue);
+                            break;
+                        case 3:
+                            end_menu=1;
+                            *end=1;         // Termina el juego
+                            break;
+                    }
+                    break;
             }
             if (!end_menu) {
                 switch (contador%4)
@@ -105,42 +106,43 @@ void menu_pausa (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO
     while(!end_menu) {
         al_wait_for_event(event_queue, event);
         if (event->type == ALLEGRO_EVENT_KEY_DOWN)
+        {
+            switch (event->keyboard.keycode)
             {
-		al_play_sample(sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
-                switch (event->keyboard.keycode)
-                {
-                    case ALLEGRO_KEY_DOWN: 
-                        contador++;               
-                        break;
-                    case ALLEGRO_KEY_UP:
-                        contador--;
-                        break;
-                    case ALLEGRO_KEY_ESCAPE:
-                        end_menu=1;
-                        break;
-                    case ALLEGRO_KEY_ENTER:
-                        switch (contador%4)
-                        {
-                            case 0:             // Vuelve al juego
-                                end_menu=1;
-                                break;
-                            case 1:
-                                *end=1;         // Termina el juego
-                                end_menu=1;
-                                break;
-                            case 2:             // Top Scores
-                                print_high_scores(font, event, event_queue);
-                                break;
-                            case 3:    
-                                end_menu=1;
-                                clear_mat(matriz);
-                                generador(in_use, jugador);
-                                init_jugador(jugador);
-                                clear_display();
-                                ask_name(jugador, event, event_queue, font);
-                                break;                        
-                        }
-                        break;
+                case ALLEGRO_KEY_DOWN:
+                    al_play_sample(sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+                    contador++;
+                    break;
+                case ALLEGRO_KEY_UP:
+                    al_play_sample(sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+                    contador--;
+                    break;
+                case ALLEGRO_KEY_ESCAPE:
+                    end_menu=1;
+                    break;
+                case ALLEGRO_KEY_ENTER:
+                    switch (contador%4)
+                    {
+                        case 0:             // Vuelve al juego
+                            end_menu=1;
+                            break;
+                        case 1:
+                            *end=1;         // Termina el juego
+                            end_menu=1;
+                            break;
+                        case 2:             // Top Scores
+                            print_high_scores(font, event, event_queue);
+                            break;
+                        case 3:
+                            end_menu=1;
+                            clear_mat(matriz);
+                            generador(in_use, jugador);
+                            init_jugador(jugador);
+                            clear_display();
+                            ask_name(jugador, event, event_queue, font);
+                            break;
+                    }
+                    break;
             }
             if (!end_menu) {
                 switch (contador%4)
@@ -183,7 +185,7 @@ void menu_pausa (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO
     }
 }
 
-void game_over_allegro (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador) {
+void game_over_allegro (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, ALLEGRO_SAMPLE*sound, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador) {
     
     unsigned char contador = 0;
     char end_game_over=0;
@@ -206,9 +208,11 @@ void game_over_allegro (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, 
             switch (event->keyboard.keycode)
             {
                 case ALLEGRO_KEY_DOWN: 
+                    al_play_sample(sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
                     contador++;               
                     break;
                 case ALLEGRO_KEY_UP:
+                    al_play_sample(sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
                     contador--;
                     break;
                 case ALLEGRO_KEY_ENTER:

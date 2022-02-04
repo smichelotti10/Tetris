@@ -123,7 +123,7 @@ int main(void) {
         if(game_over(matriz))
         {
             top_scores(&jugador);
-            game_over_allegro(&event, event_queue, font, &end, &in_use, matriz, &jugador);
+            game_over_allegro(&event, event_queue, font, sound1, &end, &in_use, matriz, &jugador);
         } 
     }
 

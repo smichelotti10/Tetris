@@ -41,7 +41,7 @@ void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int leve
 
 #ifdef ALLEGRO
 
-void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next)
+void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int level)
 {
     int fil, col, i;
 

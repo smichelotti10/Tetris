@@ -131,11 +131,10 @@ void get_input (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, pieza_t*
         case ALLEGRO_KEY_UP:
             rotar(in_use, mat);
             break;
-        case ALLEGRO_KEY_SPACE: 
-            all_down(in_use, mat);
+        case ALLEGRO_KEY_SPACE:
+            jugador->score+=((jugador->level)*(all_down(in_use, mat))*3);
             break;
         case ALLEGRO_KEY_ESCAPE:
-        case ALLEGRO_KEY_M:
             menu_pausa(event, event_queue, font, end, in_use, mat, jugador);                 // PLAY/PAUSE, ESCAPE, TOP-SCORES, REINICIAR JUEGO
             break;
             

@@ -5,11 +5,14 @@
 #include "rules.h"
 #include "piezas.h"
 
+#define RPI 0
+#define ALLEGRO 1
 
+#ifndef PLATAFORMA    
+#define PLATAFORMA ALLEGRO
+#endif
 
-
-
-#ifdef RPI
+#if PLATAFORMA == RPI
 
 #include "raspi.h"
 
@@ -37,9 +40,8 @@ void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int leve
         }
     }
 }
-#endif
 
-#ifdef ALLEGRO
+#elif PLATAFORMA == ALLEGRO
 
 void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int level)
 {
@@ -48,8 +50,6 @@ void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int leve
     for (i=0; i<COL; i++) {                 // Primero se va a limpiar la fila que se completo, podemos 
                                             // agregar un delay si queremos para que no aparezca todo de una.
         matriz[fila][i] = 0;
-  
-        //AGREGAR PRINT MAT DE ALLEGRO
     }
 
     int aux;

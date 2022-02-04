@@ -36,6 +36,7 @@ int main(void) {
     al_init_primitives_addon();
     al_init_font_addon();
     al_init_ttf_addon();
+    al_init_image_addon();
     
     event_queue = al_create_event_queue();
     al_register_event_source(event_queue, al_get_keyboard_event_source());  

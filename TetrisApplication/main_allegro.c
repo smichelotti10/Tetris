@@ -28,6 +28,9 @@ int main(void) {
     ALLEGRO_SAMPLE * sound1;
     ALLEGRO_SAMPLE * sound2;
     ALLEGRO_SAMPLE * sound3;
+    ALLEGRO_SAMPLE * sound4;
+    ALLEGRO_SAMPLE * song;
+    ALLEGRO_SAMPLE_INSTANCE* songInstance;
     
     //INICIALIZO LAS VARIABLES Y BIBLIOTECAS
     srand(time(NULL)); //genero una semilla randomizada
@@ -54,7 +57,10 @@ int main(void) {
     sound1=al_load_sample("efectotecla.wav");
     sound2=al_load_sample("efectocae.wav");
     sound3=al_load_sample("efectofila.wav");
-    al_reserve_samples(3);
+    sound4=al_load_sample("gameover.wav");
+    song=al_load_sample("intro.ogg");
+    songInstance=al_create_sample_instance(song);
+    al_reserve_samples(6);
     
     if(!display) {
         al_show_native_message_box(NULL,NULL,NULL, "No se pudo crear un display", NULL, 0);
@@ -70,14 +76,23 @@ int main(void) {
         al_destroy_font(font);
         al_destroy_sample(sound1);
         al_destroy_sample(sound2);
+        al_destroy_sample(sound3);
+	al_destroy_sample(sound4);
+	al_destroy_sample(song);
+	al_destroy_sample_instance(songInstance);
         
         return 0;
     }
      
     al_draw_text(font, BLANCO, ANCHO_PANTALLA/2, ALTO_PANTALLA/2, ALLEGRO_ALIGN_CENTRE, "TETRIS");
     al_flip_display();
-    al_rest(1.0);
-    
+    al_set_sample_instance_playmode(songInstance, ALLEGRO_PLAYMODE_LOOP);
+    al_attach_sample_instance_to_mixer(songInstance, al_get_default_mixer());
+    al_play_sample_instance(songInstance);
+    al_rest(4.0);
+    al_destroy_sample(song);
+    al_destroy_sample_instance(songInstance);
+
     // JUEGO
     unsigned long int time = 0;
     char end=0;
@@ -104,7 +119,7 @@ int main(void) {
         {
             if(mover_pieza(&in_use, matriz, ABA)) //con la función de move, ya nos aseguramos que se pueda seguir bajando o no.
             {
-		al_play_sample(sound2, 1.0, 0.0, 1.5, ALLEGRO_PLAYMODE_ONCE, 0);
+		al_play_sample(sound2, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
                 setear_pieza(&in_use, matriz); //guardamos la pieza en la matriz
                 int var = fila_completa(matriz, &jugador, &to_use); //vemos si se completo una fila para sumar puntos y eso
 		if(var==1){
@@ -122,8 +137,10 @@ int main(void) {
         
         if(game_over(matriz))
         {
+	    //al_play_sample(sound4, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
             top_scores(&jugador);
             game_over_allegro(&event, event_queue, font, sound1, &end, &in_use, matriz, &jugador);
+	    
         } 
     }
 
@@ -131,6 +148,12 @@ int main(void) {
     al_destroy_display(display);
     al_destroy_event_queue(event_queue);
     al_destroy_font(font);
-    
+    al_destroy_sample(sound1);
+    al_destroy_sample(sound2);
+    al_destroy_sample(sound3);
+    al_destroy_sample(sound4);
+    al_destroy_sample(song);
+    al_destroy_sample_instance(songInstance);
+
     return 0;
 }

@@ -1,47 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
 #include "rules.h"
 #include "piezas.h"
 
-#define RPI 0
-#define ALLEGRO 1
-
-#ifndef PLATAFORMA    
-#define PLATAFORMA ALLEGRO
-#endif
-
-#if PLATAFORMA == RPI
-
+#ifdef RPI
 #include "raspi.h"
 
 void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int level)
 {
     int fil, col, i;
-
     for (i=0; i<COL; i++) {                 // Primero se va a limpiar la fila que se completo, podemos 
                                             // agregar un delay si queremos para que no aparezca todo de una.
         matriz[fila][i] = 0;
      
         print_mat(NULL,matriz,next,level);
         espera(0.07);                              //Parte agregada para la RPI
-
     }
-
     int aux;
     for (fil=fila; fil>0; fil--) {          // Este ciclo baja toda la batriz sobre la fila que se elimino en un bloque
-
         for (col=0; col<COL; col++) {           // Podemos agregar delay cada vez que realiza este for para mostrar una animacion
-
             aux = matriz[fil][col];
             matriz[fil][col] = matriz[fil-1][col];
             matriz[fil-1][col] = aux;
         }
     }
 }
+#endif
 
-#elif PLATAFORMA == ALLEGRO
+#ifdef ALLEGRO
 
 void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int level)
 {
@@ -50,31 +37,26 @@ void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int leve
     for (i=0; i<COL; i++) {                 // Primero se va a limpiar la fila que se completo, podemos 
                                             // agregar un delay si queremos para que no aparezca todo de una.
         matriz[fila][i] = 0;
+  
+        //AGREGAR PRINT MAT DE ALLEGRO
     }
-
     int aux;
     for (fil=fila; fil>0; fil--) {          // Este ciclo baja toda la batriz sobre la fila que se elimino en un bloque
-
         for (col=0; col<COL; col++) {           // Podemos agregar delay cada vez que realiza este for para mostrar una animacion
-
             aux = matriz[fil][col];
             matriz[fil][col] = matriz[fil-1][col];
             matriz[fil-1][col] = aux;
         }
     }
 }
-
 #endif
-
 
 void init_jugador(game_stats_t* jugador)
 {
     jugador->level = 1;
     jugador->cant_piezas = 0;
     jugador->score = 0;
-
 }
-
 void generador(pieza_t * in_use, game_stats_t* jugador)
 {
     
@@ -192,11 +174,9 @@ void generador(pieza_t * in_use, game_stats_t* jugador)
             }
     }
 }
-
 int mover_pieza(pieza_t* in_use, int mat[FIL][COL], char direccion)
 {
 pieza_t to_use = *in_use;
-
 if(direccion == DER) //#define DER 'd'
 {
 	(to_use.coord_x)++;
@@ -227,14 +207,11 @@ else if (direccion == ABA)
 }
 return 0;
 }
-
 int check(pieza_t* pieza, int mat[FIL][COL]){
-
     int j;
         
         
         for(j=0; j<=3; j++){ 
-
             if(mat[(pieza->mat_bloque[1][j])+(pieza->coord_y)][(pieza->mat_bloque[0][j])+(pieza->coord_x)]){ //localizamos los bloques dentro de la matriz de juego //verifica que no haya superposición de los bloques
                return 1; // si devuelve 1 es porque hay error de superposición
             }
@@ -254,7 +231,6 @@ int check(pieza_t* pieza, int mat[FIL][COL]){
         }
     return 0;
 }
-
 unsigned char all_down(pieza_t* in_use,int matriz[FIL][COL])
 {
 int contador;
@@ -267,7 +243,6 @@ for(contador = 0 ; contador < 20 ; contador++)
     setear_pieza(in_use, matriz);
     return ((in_use->coord_y) - aux.coord_y);
 }
-
 void rotar(pieza_t* in_use,int mat[FIL][COL])
 {
     pieza_t to_use = *in_use;
@@ -356,20 +331,14 @@ void rotar(pieza_t* in_use,int mat[FIL][COL])
         }
     }
 }
-
 void fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next)
 {
     int fil, col, bloques, cant=0;
-
     for(fil=0; fil<FIL; fil++) {
-
         for(col=0, bloques=0; col<COL; col++) {   // recorro cada fila de la matriz analizando si la fila esta completa o no.
-
             if (matriz[fil][col]!=0) {
-
                 bloques++;
             }
-
         } 
         if (bloques==10) {           // Si la fila esta completa llamo a la funcion push_mat_down para desplazar una fila
             push_mat_down (matriz, fil, next, jugador->level);  //aca agregue jugador->level          // para abajo todas las filas de arriba a la que hay que eliminar
@@ -392,28 +361,22 @@ void fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next)
             break;
     }
 }
-
 void espera(float number_of_seconds)
 {
-
     //float miliseconds = number_of_seconds * 1000;
     // Storing start time
     clock_t start_time = clock();
-
     // looping till required time is not achieved
     while (clock() < start_time + number_of_seconds * CLOCKS_PER_SEC)
         ;
 }
-
 void setear_pieza(pieza_t* pieza, int mat[FIL][COL])
 {
     int j;
     for(j=0; j<=3; j++){ 
         mat[(pieza->mat_bloque[1][j])+(pieza->coord_y)][(pieza->mat_bloque[0][j])+(pieza->coord_x)] = pieza->id;
     }
-
 }
-
 int game_over(int matriz[FIL][COL])
 {
     int j;
@@ -427,7 +390,6 @@ int game_over(int matriz[FIL][COL])
     }
     return 0;
 }
-
 void clear_mat(int mat[FIL][COL]){ //función que borra la matriz, podriamos hacerla general.
     
     int i,j;
@@ -437,16 +399,13 @@ void clear_mat(int mat[FIL][COL]){ //función que borra la matriz, podriamos hac
             mat[i][j]= 0;
         }
     }
-
 }
-
 void top_scores(game_stats_t* jugador){
     
     
     //Leo el archivo, ordeno todos los datos y escribo uno "nuevo" con el mismo nombre
     int i,j;
     int c;
-
     jugador_top_t jugadores_top[11];
     for (i = 0; i < 11; i++)
     {
@@ -457,7 +416,6 @@ void top_scores(game_stats_t* jugador){
         jugadores_top[i].posicion_top=i;
         jugadores_top[i].vacio=1;
     }
-
     FILE* pfile1;
     
     pfile1 = fopen("top_scores.txt", "r");
@@ -475,7 +433,6 @@ void top_scores(game_stats_t* jugador){
         }
     }
     else { //esto es el caso en el que si existe, hay que leerlo, pasar la info a los array y luego ordenarlo con el nuevo jugador
-
         while(!feof(pfile1)) //Hasta que no llegue al EOF seguimos leyendo
         {
             for ( i = 0; i < 10; i++) //leemos los datos de los jugadores del 0 al 9
@@ -497,7 +454,6 @@ void top_scores(game_stats_t* jugador){
             }   
         }
         fclose(pfile1);
-
         jugadores_top[10].score = jugador->score; //meto los datos del jugador actual en el array para ordenarlo
         for (i = 0; i < 3; i++)
         {      
@@ -505,7 +461,6 @@ void top_scores(game_stats_t* jugador){
         }
         jugadores_top[10].posicion_top=10;
         jugadores_top[10].vacio=0;
-
         for (i=10; i >=0 ; i--) //recorro todos los jugadores
         {  
             if (jugadores_top[10].score >= jugadores_top[i].score)
@@ -514,7 +469,6 @@ void top_scores(game_stats_t* jugador){
                 jugadores_top[i].posicion_top ++;
             } 
         }       
-
         pfile1 = fopen("top_scores.txt", "w");
         for (i = 0; i < 10; i++) //me voy a mover entre los primeros jugadores según el id de posicion que les corresponde
         {

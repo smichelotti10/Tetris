@@ -30,7 +30,9 @@ int main(void) {
     ALLEGRO_SAMPLE * sound3;
     ALLEGRO_SAMPLE * sound4;
     ALLEGRO_SAMPLE * song;
+    ALLEGRO_SAMPLE * cjuego;
     ALLEGRO_SAMPLE_INSTANCE* songInstance;
+    ALLEGRO_SAMPLE_INSTANCE* songInstance2;
     
     //INICIALIZO LAS VARIABLES Y BIBLIOTECAS
     srand(time(NULL)); //genero una semilla randomizada
@@ -59,8 +61,10 @@ int main(void) {
     sound3=al_load_sample("efectofila.wav");
     sound4=al_load_sample("gameover.wav");
     song=al_load_sample("intro.ogg");
+    cjuego=al_load_sample("cjuego.ogg");
+    songInstance2=al_create_sample_instance(cjuego);
     songInstance=al_create_sample_instance(song);
-    al_reserve_samples(6);
+    al_reserve_samples(5);
     
     if(!display) {
         al_show_native_message_box(NULL,NULL,NULL, "No se pudo crear un display", NULL, 0);
@@ -80,6 +84,8 @@ int main(void) {
 	al_destroy_sample(sound4);
 	al_destroy_sample(song);
 	al_destroy_sample_instance(songInstance);
+        al_destroy_sample(cjuego);
+	al_destroy_sample_instance(songInstance2);
         
         return 0;
     }
@@ -100,7 +106,10 @@ int main(void) {
     menu_inicio(&event, event_queue, font, sound1, &end, &in_use, matriz, &jugador);
     
     while(!end) {
-        
+
+        al_set_sample_instance_playmode(songInstance2, ALLEGRO_PLAYMODE_LOOP);
+        al_attach_sample_instance_to_mixer(songInstance2, al_get_default_mixer());
+        al_play_sample_instance(songInstance2);
         print_mat_juego (&in_use, &to_use,matriz,font, &jugador);
         if (time==0)
         {
@@ -137,7 +146,8 @@ int main(void) {
         
         if(game_over(matriz))
         {
-	    //al_play_sample(sound4, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+            al_stop_sample_instance(songInstance2);
+	    al_play_sample(sound4, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
             top_scores(&jugador);
             game_over_allegro(&event, event_queue, font, sound1, &end, &in_use, matriz, &jugador);
 	    
@@ -152,8 +162,9 @@ int main(void) {
     al_destroy_sample(sound2);
     al_destroy_sample(sound3);
     al_destroy_sample(sound4);
-    al_destroy_sample(song);
-    al_destroy_sample_instance(songInstance);
+    al_destroy_sample(cjuego);
+    al_destroy_sample_instance(songInstance2);
+
 
     return 0;
 }

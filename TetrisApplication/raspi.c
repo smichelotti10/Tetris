@@ -7,8 +7,12 @@
 #include "menu_rpi.h"
 #include "raspi.h"
 
-#include "disdrv.h"
-#include "joydrv.h"
+#include "../rpi_resources/disdrv.h"
+#include "../rpi_resources/joydrv.h"
+#include <SDL/SDL.h>
+#include "../rpi_resources/libaudio.h"
+
+extern char music[];
 
 
 
@@ -225,6 +229,12 @@ void get_name(game_stats_t* jugador){
         print_flechas_verticales(i*6);
         while ( (signal = get_option()) != MENU)
         {   
+            if (player_status()==FINISHED) //revisamos que la musica no se haya cortado
+            { 	
+                stop_sound();
+                set_file_to_play(music);		
+                play_sound(); 
+            }
                 switch (signal)
                 {
                 case ABA:
@@ -1145,6 +1155,13 @@ void print_top_scores(void){
 
         while (!exit)
         {   
+            if (player_status()==FINISHED) //revisamos que la musica no se haya cortado
+            { 	
+                stop_sound();
+                set_file_to_play(music);		
+                play_sound(); 
+            }
+
             signal=get_option();
             switch (signal)
             {

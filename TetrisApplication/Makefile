@@ -2,14 +2,14 @@ ALLEGRO_LIBRARIES =  allegro-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5
 ALLEGRO_FLAGS = $(shell pkg-config --cflags --libs $(ALLEGRO_LIBRARIES))
 
 tetrisR:main_Rpi.o menu_rpi.o raspi.o piezasR.o
-	gcc disdrv.o joydrv.o main_Rpi.o menu_rpi.o raspi.o piezasR.o -o tetrisR
+	gcc ../rpi_resources/disdrv.o ../rpi_resources/joydrv.o main_Rpi.o menu_rpi.o raspi.o piezasR.o ../rpi_resources/libAudioSDL1.o -I/usr/local/include -L/usr/local/lib -lSDL -o tetrisR 
 tetrisA:juego_allegro.o main_allegro.o menu_allegro.o piezasA.o
 	gcc juego_allegro.o main_allegro.o menu_allegro.o piezasA.o $(ALLEGRO_FLAGS) -o tetrisA 
-main_Rpi.o: main_Rpi.c rules.h disdrv.h joydrv.h piezas.h menu_rpi.h raspi.h
+main_Rpi.o: main_Rpi.c rules.h ../rpi_resources/disdrv.h ../rpi_resources/joydrv.h ../rpi_resources/libaudio.h piezas.h menu_rpi.h raspi.h
 	gcc -c -Wall main_Rpi.c
-menu_rpi.o: menu_rpi.c menu_rpi.h disdrv.h joydrv.h rules.h raspi.h 
+menu_rpi.o: menu_rpi.c menu_rpi.h ../rpi_resources/disdrv.h ../rpi_resources/joydrv.h rules.h raspi.h 
 	gcc -c -Wall menu_rpi.c
-raspi.o: raspi.c rules.h piezas.h menu_rpi.h raspi.h disdrv.h joydrv.h
+raspi.o: raspi.c rules.h piezas.h menu_rpi.h raspi.h ../rpi_resources/disdrv.h ../rpi_resources/joydrv.h
 	gcc -c -Wall raspi.c
 piezasR.o: piezas.c piezas.h rules.h
 	gcc -c -Wall piezas.c -o piezasR.o -D RPI

@@ -2,14 +2,17 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "termlib.h"
-#include "disdrv.h"
-#include "joydrv.h"
+
+#include "../rpi_resources/disdrv.h"
+#include "../rpi_resources/joydrv.h"
+#include <SDL/SDL.h>
+#include "../rpi_resources/libaudio.h"
 
 #include "rules.h"
 #include "raspi.h"
 #include "menu_rpi.h"
 
+extern char music[];
 
 
 
@@ -17,12 +20,18 @@
 
 
 int menu_pausa(void){
-
+    
     char signal;
     int option = 0;  
    print_option(option);
    while ( (signal = get_option()) != MENU)
    {   
+       if (player_status()==FINISHED) //revisamos que la musica no se haya cortado
+            { 	
+                stop_sound();
+                set_file_to_play(music);		
+                play_sound(); 
+            }
         switch (signal)
         {
         case DER:

@@ -196,8 +196,8 @@ void game_over_allegro (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, 
     al_draw_text(font, BLANCO, ANCHO_PANTALLA/2, TAM_BLOQUE*4, ALLEGRO_ALIGN_CENTRE, "GAME OVER");
     al_draw_text(font, BLANCO, ANCHO_PANTALLA/2 + TAM_BLOQUE*3, TAM_BLOQUE*6, ALLEGRO_ALIGN_RIGHT, "YOUR SCORE: ");
     al_draw_text(font, BLANCO, ANCHO_PANTALLA/2 + TAM_BLOQUE*4, TAM_BLOQUE*6, ALLEGRO_ALIGN_LEFT, score);
-    al_draw_text(font, BLANCO, ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "HIGH SCORES");
-    al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "RESTART GAME");
+    al_draw_text(font, AMARILLO, ANCHO_PANTALLA/2, TAM_BLOQUE*9, ALLEGRO_ALIGN_CENTRE, "HIGH SCORES");
+    al_draw_text(font, BLANCO, ANCHO_PANTALLA/2, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTRE, "RESTART GAME");
     al_draw_text(font, BLANCO, ANCHO_PANTALLA/2, TAM_BLOQUE*13, ALLEGRO_ALIGN_CENTRE, "QUIT");
     al_flip_display();
     
@@ -409,27 +409,27 @@ void commands (ALLEGRO_FONT* font, ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *ev
     clear_display();   
     
     al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*1.5, ALLEGRO_ALIGN_CENTER, "rotate");
-    imagen = al_load_bitmap("flecha_arriba.PNG");
+    imagen = al_load_bitmap("allegro_files/flecha_arriba.PNG");
     al_draw_bitmap(imagen, ANCHO_PANTALLA*0.75, TAM_BLOQUE,0);
     
     al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*4.5, ALLEGRO_ALIGN_CENTER, "move right");
-    imagen = al_load_bitmap("flecha_der.PNG");
+    imagen = al_load_bitmap("allegro_files/flecha_der.PNG");
     al_draw_bitmap(imagen, ANCHO_PANTALLA*0.75, TAM_BLOQUE*4,0);
     
     al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*7.5, ALLEGRO_ALIGN_CENTER, "move left");
-    imagen = al_load_bitmap("flecha_izq.PNG");
+    imagen = al_load_bitmap("allegro_files/flecha_izq.PNG");
     al_draw_bitmap(imagen, ANCHO_PANTALLA*0.75, TAM_BLOQUE*7,0);
     
     al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*10.5, ALLEGRO_ALIGN_CENTER, "soft drop");
-    imagen = al_load_bitmap("flecha_abajo.PNG");
+    imagen = al_load_bitmap("allegro_files/flecha_abajo.PNG");
     al_draw_bitmap(imagen, ANCHO_PANTALLA*0.75, TAM_BLOQUE*10,0);
     
     al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*13.5, ALLEGRO_ALIGN_CENTER, "hard drop");
-    imagen = al_load_bitmap("space_bar.PNG");
+    imagen = al_load_bitmap("allegro_files/space_bar.PNG");
     al_draw_bitmap(imagen, ANCHO_PANTALLA*0.75, TAM_BLOQUE*13,0);
     
     al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*16.5, ALLEGRO_ALIGN_CENTER, "menu");
-    imagen = al_load_bitmap("esc_key.PNG");
+    imagen = al_load_bitmap("allegro_files/esc_key.PNG");
     al_draw_bitmap(imagen, ANCHO_PANTALLA*0.75, TAM_BLOQUE*16,0);
 
     al_flip_display();

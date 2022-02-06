@@ -101,7 +101,7 @@ void juego(char* end_program){
         clear_mat(matriz);
         init_jugador(&jugador); //llamamo a la función que inicializa las stats del juego  
         
-        jugador.level = 8;
+        //jugador.level = 8;
         
 
         char fin_partida = 0;

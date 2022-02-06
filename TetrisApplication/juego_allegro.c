@@ -162,7 +162,7 @@ void get_input (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_
             jugador->score+=((jugador->level)*(all_down(in_use, hold, mat))*3);
             break;
         case ALLEGRO_KEY_ESCAPE:
-            menu_pausa(event, event_queue, font, sound, end, in_use, mat, jugador);                 // PLAY/PAUSE, ESCAPE, TOP-SCORES, REINICIAR JUEGO
+            menu_pausa(event, event_queue, font, sound, end, in_use, mat, jugador, hold);                 // PLAY/PAUSE, ESCAPE, TOP-SCORES, REINICIAR JUEGO
             break;
         case ALLEGRO_KEY_C:
             funcion_hold(in_use,hold,to_use,jugador);

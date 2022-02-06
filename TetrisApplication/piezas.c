@@ -66,7 +66,7 @@ void generador(pieza_t * in_use, game_stats_t* jugador)
     in_use->id = rand()%7+1;
     in_use->coord_x = 3;
     in_use->coord_y = 0;
-    in_use->position = 0;
+    in_use->hold_previo = 0;
     
     jugador->cant_piezas++;
     switch (jugador->cant_piezas){
@@ -176,73 +176,70 @@ void generador(pieza_t * in_use, game_stats_t* jugador)
 }
 int mover_pieza(pieza_t* in_use, int mat[FIL][COL], char direccion)
 {
-pieza_t to_use = *in_use;
-if(direccion == DER) //#define DER 'd'
-{
-	(to_use.coord_x)++;
-	if(!check(&to_use,mat))
-	{
-		*in_use = to_use;
-	}
-}
-else if (direccion == IZQ)
-{
-	(to_use.coord_x)--;	
-	if(!check(&to_use,mat))
-	{
-		*in_use = to_use;
-	}
-}
-else if (direccion == ABA)
-{
-	(to_use.coord_y)++;
-	if(!check(&to_use,mat))
-	{
-		*in_use = to_use;
-	}
+    pieza_t to_use = *in_use;
+    if(direccion == DER) //#define DER 'd'
+    {
+        (to_use.coord_x)++;
+        if(!check(&to_use,mat))
+        {
+            *in_use = to_use;
+        }
+    }
+    else if (direccion == IZQ)
+    {
+        (to_use.coord_x)--;
+        if(!check(&to_use,mat))
+        {
+            *in_use = to_use;
+        }
+    }
+    else if (direccion == ABA)
+    {
+        (to_use.coord_y)++;
+        if(!check(&to_use,mat))
+        {
+            *in_use = to_use;
+        }
         else
         {
             return 1; //esto es por si llego al final o si se choca una pieza, avisa para que se setee.
         }
-}
-return 0;
-}
-int check(pieza_t* pieza, int mat[FIL][COL]){
-    int j;
-        
-        
-        for(j=0; j<=3; j++){ 
-            if(mat[(pieza->mat_bloque[1][j])+(pieza->coord_y)][(pieza->mat_bloque[0][j])+(pieza->coord_x)]){ //localizamos los bloques dentro de la matriz de juego //verifica que no haya superposición de los bloques
-               return 1; // si devuelve 1 es porque hay error de superposición
-            }
-            
-            
-            
-            if( (((pieza->mat_bloque[0][j])+(pieza->coord_x)) < 0) || (((pieza->mat_bloque[0][j])+(pieza->coord_x)) > 9) ){ //verificamos que los bloques esten dentro de la matriz
-               return 1; //si devuelve 1 es porque hay error de margenes
-            }
-            
-            if( ((pieza->mat_bloque[1][j])+(pieza->coord_y)) > 19){ //verificamos que los bloques esten dentro de la matriz
-                return 1; //si devuelve 1 es porque hay error de margenes
-            }    
-            
-            
-            
-        }
+    }
     return 0;
 }
-unsigned char all_down(pieza_t* in_use,int matriz[FIL][COL])
-{
-int contador;
-pieza_t aux = *in_use;
-for(contador = 0 ; contador < 20 ; contador++)
-{
-	mover_pieza(in_use,matriz,ABA);
-    
+
+int check(pieza_t* pieza, int mat[FIL][COL]) {
+
+    int j;
+        
+    for(j=0; j<=3; j++){
+        if(mat[(pieza->mat_bloque[1][j])+(pieza->coord_y)][(pieza->mat_bloque[0][j])+(pieza->coord_x)]){ //localizamos los bloques dentro de la matriz de juego //verifica que no haya superposición de los bloques
+            return 1; // si devuelve 1 es porque hay error de superposición
+        }
+
+        if( (((pieza->mat_bloque[0][j])+(pieza->coord_x)) < 0) || (((pieza->mat_bloque[0][j])+(pieza->coord_x)) > 9) ){ //verificamos que los bloques esten dentro de la matriz
+            return 1; //si devuelve 1 es porque hay error de margenes
+        }
+
+        if( ((pieza->mat_bloque[1][j])+(pieza->coord_y)) > 19){ //verificamos que los bloques esten dentro de la matriz
+            return 1; //si devuelve 1 es porque hay error de margenes
+        }
+    }
+    return 0;
 }
-    setear_pieza(in_use, matriz);
+
+unsigned char all_down(pieza_t* in_use, pieza_t* hold, int matriz[FIL][COL]) {
+
+    int contador;
+
+    pieza_t aux = *in_use;
+    for(contador = 0 ; contador < 20 ; contador++) {
+        mover_pieza(in_use,matriz,ABA);
+    }
+    setear_pieza(in_use, hold, matriz);
     return ((in_use->coord_y) - aux.coord_y);
 }
+
 void rotar(pieza_t* in_use,int mat[FIL][COL])
 {
     pieza_t to_use = *in_use;
@@ -331,6 +328,7 @@ void rotar(pieza_t* in_use,int mat[FIL][COL])
         }
     }
 }
+
 int fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next)
 {
     int fil, col, bloques, cant=0;
@@ -364,6 +362,7 @@ int fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next)
     }
 	return resto;
 }
+
 void espera(float number_of_seconds)
 {
     //float miliseconds = number_of_seconds * 1000;
@@ -373,13 +372,16 @@ void espera(float number_of_seconds)
     while (clock() < start_time + number_of_seconds * CLOCKS_PER_SEC)
         ;
 }
-void setear_pieza(pieza_t* pieza, int mat[FIL][COL])
+
+void setear_pieza(pieza_t* pieza, pieza_t* hold, int mat[FIL][COL])
 {
     int j;
     for(j=0; j<=3; j++){ 
         mat[(pieza->mat_bloque[1][j])+(pieza->coord_y)][(pieza->mat_bloque[0][j])+(pieza->coord_x)] = pieza->id;
     }
+    hold->hold_previo = 0;
 }
+
 int game_over(int matriz[FIL][COL])
 {
     int j;
@@ -393,6 +395,7 @@ int game_over(int matriz[FIL][COL])
     }
     return 0;
 }
+
 void clear_mat(int mat[FIL][COL]){ //función que borra la matriz, podriamos hacerla general.
     
     int i,j;
@@ -403,6 +406,7 @@ void clear_mat(int mat[FIL][COL]){ //función que borra la matriz, podriamos hac
         }
     }
 }
+
 void top_scores(game_stats_t* jugador){
     
     
@@ -486,4 +490,28 @@ void top_scores(game_stats_t* jugador){
         }
         fclose(pfile1);        
     }
+}
+
+void funcion_hold (pieza_t *in_use, pieza_t *hold, pieza_t* to_use, game_stats_t* jugador) {
+    
+    pieza_t aux;
+
+    if (!hold->hold_previo) {
+        if (hold->id != 0) {
+            aux=*in_use;
+            *in_use=*hold;
+            *hold=aux;
+        }
+        else {
+            aux=*hold;
+            *hold=*in_use;
+            *in_use=*to_use;
+
+            generador(to_use,jugador);
+        }
+
+        hold->coord_x = 3;
+        hold->coord_y = 0;
+    }
+    hold->hold_previo = 1;
 }

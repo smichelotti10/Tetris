@@ -19,7 +19,7 @@ juego_allegro.o: juego_allegro.c juego_allegro.h menu_allegro.h rules.h piezas.h
 	gcc -c -Wall juego_allegro.c 
 main_allegro.o: main_allegro.c rules.h piezas.h menu_allegro.h juego_allegro.h
 	gcc -c -Wall main_allegro.c 
-menu_allegro.o: menu_allegro.c menu_allegro.h rules.h juego_allegro.h
+menu_allegro.o: menu_allegro.c menu_allegro.h rules.h juego_allegro.h piezas.h
 	gcc -c -Wall menu_allegro.c
 clean:
 	rm -f *i.o

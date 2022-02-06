@@ -1,4 +1,5 @@
 #include    "rules.h"
+#include    "piezas.h"
 #include    "juego_allegro.h"
 #include    "menu_allegro.h"
 

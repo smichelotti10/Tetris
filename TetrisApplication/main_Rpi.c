@@ -91,6 +91,9 @@ void juego(char* end_program){
         game_stats_t jugador;
         pieza_t in_use;
         pieza_t next;
+        pieza_t hold;
+        hold.id=0;
+        hold.hold_previo=0;
         
         get_name(&jugador);
 
@@ -98,7 +101,7 @@ void juego(char* end_program){
         clear_mat(matriz);
         init_jugador(&jugador); //llamamo a la función que inicializa las stats del juego  
         
-        //jugador.level = 10;
+        jugador.level = 8;
         
 
         char fin_partida = 0;
@@ -118,12 +121,12 @@ void juego(char* end_program){
                     play_sound(); 
                 }
 
-                print_mat(&in_use, matriz, &next, jugador.level);
-                delay(&jugador, &in_use, matriz, &next, end_program, &fin_partida);
+                print_mat(&in_use, matriz, &next, &hold, jugador.level);
+                delay(&jugador, &in_use, matriz, &next, &hold, end_program, &fin_partida);
                 if(mover_pieza(&in_use, matriz, ABA)) //con la función de mover, ya nos aseguramos que se pueda seguir bajando o no.
                 {
-                    setear_pieza(&in_use, matriz); //guardamos la pieza en la matriz
-                    fila_completa(matriz, &jugador, &next); //vemos si se completo una fila para sumar puntos y eso
+                    setear_pieza(&in_use, &hold, matriz); //guardamos la pieza en la matriz
+                    fila_completa(matriz, &jugador, &next, &hold); //vemos si se completo una fila para sumar puntos y eso
                     in_use = next; //igualamos la pieza que trabajamos a la siguiente
                     break;
                 }

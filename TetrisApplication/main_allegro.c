@@ -42,6 +42,7 @@ int main (void) {
     generador(&in_use, &jugador);       //llamamos a la función que rellena los campos de la pieza
     generador(&to_use, &jugador);
     hold.id=0;
+    hold.hold_previo=0;
     
     al_install_keyboard();
     al_install_audio();
@@ -132,7 +133,7 @@ int main (void) {
             {
                 al_play_sample(sound2, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
                 setear_pieza(&in_use, &hold, matriz); //guardamos la pieza en la matriz
-                int var = fila_completa(matriz, &jugador, &to_use); //vemos si se completo una fila para sumar puntos y eso
+                int var = fila_completa(matriz, &jugador, &to_use, &hold); //vemos si se completo una fila para sumar puntos y eso
                 if(var==1){
                     al_play_sample(sound3, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
                 }

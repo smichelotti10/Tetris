@@ -16,7 +16,7 @@ extern char music[];
 
 
 
-void print_mat (pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, long int level) {
+void print_mat (pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, pieza_t* hold, long int level) {
     int i, j, k;
     dcoord_t coord;
 
@@ -26,10 +26,21 @@ void print_mat (pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, long int l
         for ( i = 0; i < 4; i++) //En esta parte imprimimos la pieza futura
         {
             coord.x = (next->mat_bloque[0][i]) + 11;
-            coord.y = (next->mat_bloque[1][i]) + 2;
+            coord.y = (next->mat_bloque[1][i]) + 0;
             disp_write(coord, D_ON);
         }
     }
+
+    if (hold->id != 0)
+    {
+        for ( i = 0; i < 4; i++) //En esta parte imprimimos la pieza en hold
+        {
+            coord.x = (hold->mat_bloque[0][i]) + 11;
+            coord.y = (hold->mat_bloque[1][i]) + 5;
+            disp_write(coord, D_ON);
+        }
+    }
+    
 
     for (i=4; i<FIL; i++) {
         
@@ -66,11 +77,11 @@ void print_mat (pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, long int l
     }
     if (level<10)
     {
-        print_number(level,12,4);
+        print_number(level,12,6); //Aca imprimimos el nivel
     }
     else
     {
-        print_letter(23,3,12,4);
+        print_letter(23,3,12,6); //niveles mayores a 10 imprime un 'X'
     }
     
     
@@ -116,11 +127,12 @@ char get_option (void) {
 
 }
 
-void delay(game_stats_t* jugador, pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, char* end_game, char* restart_game) {
+void delay(game_stats_t* jugador, pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, pieza_t* hold, char* end_game, char* restart_game) {
     float number_of_seconds = 0.35 - ((float)((jugador->level) - 1) * 0.035);
     char opc;
     char exit = 0, escape=0;
-    char ABA_counter = 0; //esto es para ver si bajo 2 veces rapido
+    char ABA_counter = 0; //esto es para ver si bajo 2 veces rapido hacia abajo
+    char ARR_counter = 0; // esto es para ver si movio dos veces rapido hacia arriba
     int menu_option;
     // Storing start time
     clock_t start_time = clock();
@@ -141,11 +153,11 @@ void delay(game_stats_t* jugador, pieza_t* in_use, int matriz[FIL][COL], pieza_t
                     ABA_counter++;
                     if (ABA_counter >=2)
                     {   
-                        jugador->score += all_down(in_use, matriz) * jugador->level * 3; //el *3 es un multiplicador random
+                        jugador->score += all_down(in_use, hold, matriz) * jugador->level * 3; //el *3 es un multiplicador random
                     }
                     else{
                     mover_pieza(in_use, matriz, opc);
-                    print_mat(in_use, matriz, next,jugador->level);
+                    print_mat(in_use, matriz, next, hold, jugador->level);
                     }
                                
                 break;
@@ -159,7 +171,7 @@ void delay(game_stats_t* jugador, pieza_t* in_use, int matriz[FIL][COL], pieza_t
                     }
                 }
                     mover_pieza(in_use, matriz, opc);
-                    print_mat(in_use, matriz, next,jugador->level);
+                    print_mat(in_use, matriz, next, hold,jugador->level);
                                
                 break;
             case ROTAR:
@@ -170,8 +182,13 @@ void delay(game_stats_t* jugador, pieza_t* in_use, int matriz[FIL][COL], pieza_t
                         break;
                     }
                 }
+                    ARR_counter++;
+                    if (ARR_counter >=3)
+                    {   
+                        funcion_hold(in_use, hold, next, jugador);
+                    }
                     rotar(in_use, matriz);
-                    print_mat(in_use, matriz, next,jugador->level);
+                    print_mat(in_use, matriz, next, hold,jugador->level);
                 
                 break;
             case MENU:

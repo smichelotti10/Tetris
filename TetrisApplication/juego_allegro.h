@@ -2,9 +2,7 @@
 #define JUEGO_ALLEGRO_H
 
 //HEADERS
-#include    "rules.h"
-#include    "piezas.h"
-#include    "menu_allegro.h"
+
 #include    <allegro5/allegro.h>
 #include    <allegro5/allegro_primitives.h>
 #include    <allegro5/allegro_ttf.h>

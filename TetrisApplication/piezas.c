@@ -7,14 +7,14 @@
 #ifdef RPI
 #include "raspi.h"
 
-void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int level)
+void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, pieza_t* hold, long int level)
 {
     int fil, col, i;
     for (i=0; i<COL; i++) {                 // Primero se va a limpiar la fila que se completo, podemos 
                                             // agregar un delay si queremos para que no aparezca todo de una.
         matriz[fila][i] = 0;
      
-        print_mat(NULL,matriz,next,level);
+        print_mat(NULL,matriz,next, hold, level);
         espera(0.07);                              //Parte agregada para la RPI
     }
     int aux;
@@ -30,7 +30,7 @@ void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int leve
 
 #ifdef ALLEGRO
 
-void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, long int level)
+void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, pieza_t*hold, long int level)
 {
     int fil, col, i;
 
@@ -329,7 +329,7 @@ void rotar(pieza_t* in_use,int mat[FIL][COL])
     }
 }
 
-int fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next)
+int fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next, pieza_t* hold)
 {
     int fil, col, bloques, cant=0;
     int resto=0;
@@ -340,7 +340,7 @@ int fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next)
             }
         } 
         if (bloques==10) {           // Si la fila esta completa llamo a la funcion push_mat_down para desplazar una fila
-            push_mat_down (matriz, fil, next, jugador->level);  //aca agregue jugador->level          // para abajo todas las filas de arriba a la que hay que eliminar
+            push_mat_down (matriz, fil, next, hold, jugador->level);  //aca agregue jugador->level          // para abajo todas las filas de arriba a la que hay que eliminar
             cant ++;
 	    resto=1;
         }

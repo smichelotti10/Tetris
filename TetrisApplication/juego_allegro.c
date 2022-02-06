@@ -1,4 +1,7 @@
+#include    "rules.h"
+#include    "piezas.h"
 #include    "juego_allegro.h"
+#include    "menu_allegro.h"
 
 void print_mat_juego (pieza_t* in_use, pieza_t *to_use, pieza_t* hold, int matriz[FIL][COL],ALLEGRO_FONT* font, game_stats_t* jugador)
 {

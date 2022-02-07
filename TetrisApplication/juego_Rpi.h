@@ -1,5 +1,5 @@
-#ifndef RASPI_H
-#define RASPI_H
+#ifndef JUEGO_RPI_H
+#define JUEGO_RPI_H
 
 
 void delay(game_stats_t* jugador, pieza_t* in_use, int matriz[FIL][COL], pieza_t*next, pieza_t* hold, char* end_game, char* restart_game);

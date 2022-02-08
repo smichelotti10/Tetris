@@ -12,7 +12,7 @@
 #include <SDL/SDL.h>
 #include "../rpi_resources/libaudio.h"
 
-extern char music[];
+extern char music[]; //obtenemos el nombre de la musica que utilizamos para el juego
 
 
 
@@ -42,20 +42,20 @@ void print_mat (pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, pieza_t* h
     }
     
 
-    for (i=4; i<FIL; i++) {
+    for (i=4; i<FIL; i++) { //imprimimos la matriz que guarda las piezas que ya cayeron
         
         for (j=0; j<COL; j++) {
 
-            if (matriz[i][j]!=0) {
+            if (matriz[i][j]!=0) { //si es distinto de 0, hay que prender el LED de esa posicion
                 coord.x = j;
-                coord.y = i-4;
+                coord.y = i-4; //arreglamos el offset de las 4 filas "fantasmas"
                 disp_write(coord, D_ON);
             }
-            else if(in_use != NULL){ 
+            else if(in_use != NULL){ //si es 0 hay 2 opciones, o no hay nada, o esta la pieza en movimiento cayendo
 
                 int print = 0;
                 
-                for (k=0; k<4; k++) {
+                for (k=0; k<4; k++) { //esto imprime la pieza cayendo en movimiento
                     if ( j == ((in_use->mat_bloque[0][k])+(in_use->coord_x)) && i == ((in_use->mat_bloque[1][k])+(in_use->coord_y))) {
 
                         print=1;
@@ -89,7 +89,7 @@ void print_mat (pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, pieza_t* h
 }
 
 void delay(game_stats_t* jugador, pieza_t* in_use, int matriz[FIL][COL], pieza_t* next, pieza_t* hold, char* end_game, char* restart_game) {
-    float number_of_seconds = 0.35 - ((float)((jugador->level) - 1) * 0.035);
+    float number_of_seconds = 0.35 - ((float)((jugador->level) - 1) * 0.035); //este es el time_out de cada llamado, notar que se reduce mientras mayor sea el nivel
     char opc;
     char exit = 0, escape=0;
     char ABA_counter = 0; //esto es para ver si bajo 2 veces rapido hacia abajo
@@ -100,25 +100,25 @@ void delay(game_stats_t* jugador, pieza_t* in_use, int matriz[FIL][COL], pieza_t
 
     // looping till required time is not achieved
     while (!exit) {
-        opc = get_option();
+        opc = get_option(); //obtenemos el movimiento del joystick
         
         switch (opc) {
             case ABA:
                 while ((get_option())) //esperamos a que vuelva para cambiar
                 {
-                    if(clock() >= start_time + number_of_seconds * CLOCKS_PER_SEC)
+                    if(clock() >= start_time + number_of_seconds * CLOCKS_PER_SEC) //esta es la condicion para ver si ya expiro el time_out
                     {
                         break;
                     }
                 }
                     ABA_counter++;
-                    if (ABA_counter >=2)
+                    if (ABA_counter >=2) //si baja 2 veces en el mismo "ciclo" es para acelerar la pieza
                     {   
-                        jugador->score += all_down(in_use, hold, matriz) * jugador->level * 3; //el *3 es un multiplicador random
+                        jugador->score += all_down(in_use, hold, matriz) * jugador->level * 3; //el *3 es un multiplicador random de puntaje
                     }
                     else{
-                    mover_pieza(in_use, matriz, opc);
-                    print_mat(in_use, matriz, next, hold, jugador->level);
+                    mover_pieza(in_use, matriz, opc); //movemos segun la señal obtenida
+                    print_mat(in_use, matriz, next, hold, jugador->level); //actualizamos el display
                     }
                                
                 break;
@@ -126,7 +126,7 @@ void delay(game_stats_t* jugador, pieza_t* in_use, int matriz[FIL][COL], pieza_t
             case IZQ:
                 while ((get_option())) //esperamos a que vuelva para cambiar
                 {
-                    if(clock() >= start_time + number_of_seconds * CLOCKS_PER_SEC)
+                    if(clock() >= start_time + number_of_seconds * CLOCKS_PER_SEC) //esta es la condicion para ver si ya expiro el time_out
                     {
                         break;
                     }
@@ -138,13 +138,13 @@ void delay(game_stats_t* jugador, pieza_t* in_use, int matriz[FIL][COL], pieza_t
             case ROTAR:
                 while ((get_option())) //esperamos a que vuelva para cambiar
                 {
-                    if(clock() >= start_time + number_of_seconds * CLOCKS_PER_SEC)
+                    if(clock() >= start_time + number_of_seconds * CLOCKS_PER_SEC) //esta es la condicion para ver si ya expiro el time_out
                     {
                         break;
                     }
                 }
                     ARR_counter++;
-                    if (ARR_counter >=3)
+                    if (ARR_counter >=3)  //si sube 3 veces en el mismo "ciclo" es para holdear la pieza
                     {   
                         funcion_hold(in_use, hold, next, jugador);
                     }
@@ -187,7 +187,8 @@ void delay(game_stats_t* jugador, pieza_t* in_use, int matriz[FIL][COL], pieza_t
             default:
                 break;
         }
-        if(clock() >= start_time + number_of_seconds * CLOCKS_PER_SEC){
+        if(clock() >= start_time + number_of_seconds * CLOCKS_PER_SEC) //esta es la condicion para ver si ya expiro el time_out
+        {
             exit = 1;
         }
     }
@@ -201,11 +202,11 @@ void get_name(game_stats_t* jugador){
     disp_clear();
     
    
-   for (i = 0; i < 3; i++)
+   for (i = 0; i < 3; i++) //lo hacemos 3 veces porque el nick lleva 3 letras
    {   
-        print_letter(option, i,0,0); //0 y 0 pq no tienen offset, son los predispuestos
+        print_letter(option, i,0,0); //0 y 0 pq no tienen offset, son los predispuestos y el index es i
         print_flechas_verticales(i*6);
-        while ( (signal = get_option()) != MENU)
+        while ( (signal = get_option()) != MENU) //hasta que no se seleccione una letra no salimos
         {   
             if (player_status()==FINISHED) //revisamos que la musica no se haya cortado
             { 	
@@ -221,7 +222,7 @@ void get_name(game_stats_t* jugador){
                         ;
                     }
                         option++; 
-                        option = (option)%26;
+                        option = (option)%26; //hay 26 valores permitidos
                         print_letter(option, i,0,0);
                         print_flechas_verticales(i*6);
                     
@@ -232,12 +233,12 @@ void get_name(game_stats_t* jugador){
                         ;
                     }
                         
-                        if (option==0)
+                        if (option==0) //si llegamos al extremo inferior, lo llevamos al extremo superior
                         {
                             option = 25;
                         }
                         else{
-                            option --;
+                            option --; //sino lo bajamos
                         }
                         print_letter(option, i,0,0);
                         print_flechas_verticales(i*6);
@@ -1020,6 +1021,8 @@ void print_letter(int option, int index, int offset_x, int offset_y){
 }
 
 void print_flechas_verticales(int offset_x){
+        //hardcodeo de unas flechas verticales para mostras en el display, 
+        //acepta offset en el eje x (sin offset se imprimen en la primer columna)
         dcoord_t coord;
         coord.x= 1 + offset_x;
         coord.y=0;
@@ -1052,10 +1055,10 @@ void print_flechas_verticales(int offset_x){
 void col_clear(int col){
     int i;
     dcoord_t coord;
-    coord.x = col; 
+    coord.x = col; //marcamos segun la columna recibida
     for (i = 0; i < 16; i++)
     {
-        coord.y=i;
+        coord.y=i; //y limpiamos todas las filas de dicha columna
         disp_write(coord, D_OFF);
     }
     
@@ -1151,7 +1154,7 @@ void print_top_scores(void){
                     i++; 
                     i = (i)%aux;
                     disp_clear();
-                    print_number(jugadores_top[i].score,0,0);
+                    print_number(jugadores_top[i].score,0,0); //imprimimos el score en el que está el arreglo guardado
                     print_flechas_verticales(6);
 
                 break;
@@ -1187,7 +1190,7 @@ void print_top_scores(void){
                 }
                 disp_clear();
                 for(j=0; j<3; j++){
-                        print_letter(jugadores_top[i].name[j]-65,j,0,0); //el -65 es pq es un char y le paso un int a print_letter
+                        print_letter(jugadores_top[i].name[j]-65,j,0,0); //el -65 es pq es un char y le paso un int a print_letter. Aqui apreto el boton entonces imprimimos el nick de quien hizo ese puntaje
                     }
 
                 while (get_option()!= IZQ)
@@ -1211,7 +1214,7 @@ void print_top_scores(void){
         }
 
     }
-    else
+    else //este es el caso que no exista el archivo o que no se pueda abrir, imprimimos "NULL" en pantalla
     {
         disp_clear();
         print_letter('N'-65,3,0,0);
@@ -1494,9 +1497,9 @@ void print_number(long int number, int offset__x, int offset_y){
 void show_score(game_stats_t* jugador){
 
     disp_clear();
-    print_number(jugador->score,0,0);
+    print_number(jugador->score,0,0); //imprimimos el puntaje del jugador
 
-    while (get_option()!=MENU)
+    while (get_option()!=MENU) //una vez que aprieta, sale de la función
     {
         ;
     }

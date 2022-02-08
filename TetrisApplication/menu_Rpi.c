@@ -11,15 +11,12 @@
 #include "rules.h"
 #include "menu_Rpi.h"
 
-extern char music[];
-
-
-
-
-
+extern char music[]; //obtenemos el nombre del archivo de musica que utilizamos en el juego
 
 int menu_pausa(void){
-    
+    /*
+    El menu de pausa tiene 4 opciones, reanudar juego, reinicio, abandonar programa o ver los top scores
+    */
     char signal;
     int option = 0;  
    print_option(option);
@@ -240,6 +237,7 @@ void print_option(int option){
 }
 
 void print_flechas_horizontales(void){
+    //hardcodeo de unas flechas horizontales en medio del display para los menu.
         dcoord_t coord;
         coord.x=0;
         coord.y=7;
@@ -268,7 +266,10 @@ void print_flechas_horizontales(void){
 }
 
 int menu_start(void){
-
+    /*
+    El menu de inicio tiene 3 opciones, jugar, abandonar programa o ver los top scores
+    por lo tanto la opcion que no usamos es la opcion 3 de reiniciar partida o volver a jugar.
+    */
     char signal;
     int option = 0;  
    print_option(option);
@@ -316,8 +317,10 @@ int menu_start(void){
 }
 
 int menu_game_over(void){
-
-    
+    /*
+    El menu de game over tiene 3 opciones, volver a jugar, abandonar programa o ver los top scores
+    por lo tanto la opcion que no usamos es la opcion 0 de jugar o reanudar.
+    */
     char signal;
     int option = 1;  
    print_option(option);
@@ -386,8 +389,8 @@ char get_option (void) {
     // ANALIZA SI SE MOVIO EL JOYSTICK (unsigned)((u<0)?-u:u)
     joy_update();
     coordenada = joy_get_coord();
-        
-    if ((coordenada.x > -75)&&(coordenada.x < 75)&&(coordenada.y > -75)&&(coordenada.y < 75)) {
+    //como el joystick es analogico tomamos un rango en el cual se considera un movimiento como mover lo suficiente hacia x lado, con un offset aceptable    
+    if ((coordenada.x > -75)&&(coordenada.x < 75)&&(coordenada.y > -75)&&(coordenada.y < 75)) { //aqui ponemos un margen por cualquier movimiento no intencional del joystick
         return VACIO;
     }
     else {

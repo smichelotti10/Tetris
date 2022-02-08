@@ -1,4 +1,5 @@
 #include    "rules.h"
+#include    "backend.h"
 #include    "juego_allegro.h"
 #include    "menu_allegro.h"
 
@@ -93,7 +94,7 @@ void menu_inicio (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGR
     }
 }
 
-void menu_pausa (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, ALLEGRO_SAMPLE*sound, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador) {
+void menu_pausa (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, ALLEGRO_SAMPLE*sound, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador, pieza_t*hold) {
    
     unsigned char contador = 0;
     char end_menu=0;
@@ -137,6 +138,8 @@ void menu_pausa (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO
                             break;
                         case 3:
                             end_menu=1;
+                            hold->id=0;
+                            hold->hold_previo=0;
                             clear_mat(matriz);
                             generador(in_use, jugador);
                             init_jugador(jugador);
@@ -187,7 +190,7 @@ void menu_pausa (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO
     }
 }
 
-void game_over_allegro (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, ALLEGRO_SAMPLE*sound, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador) {
+void game_over_allegro (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT* font, ALLEGRO_SAMPLE*sound, char* end, pieza_t* in_use, int matriz [FIL][COL], game_stats_t* jugador, pieza_t* hold) {
     
     unsigned char contador = 0;
     char end_game_over=0;
@@ -225,6 +228,8 @@ void game_over_allegro (ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *event_queue, 
                             break;                           
                         case 1:         // Vuelve al juego
                             end_game_over=1;
+                            hold->id=0;
+                            hold->hold_previo=0;
                             clear_mat(matriz);
                             generador(in_use, jugador);
                             init_jugador(jugador);
@@ -410,29 +415,33 @@ void commands (ALLEGRO_FONT* font, ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE *ev
     
     clear_display();   
     
-    al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*1.5, ALLEGRO_ALIGN_CENTER, "rotate");
+    al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*1, ALLEGRO_ALIGN_CENTER, "rotate");
     imagen = al_load_bitmap("../allegro_files/flecha_arriba.PNG");
-    al_draw_bitmap(imagen, ANCHO_PANTALLA*0.75, TAM_BLOQUE,0);
-    
-    al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*4.5, ALLEGRO_ALIGN_CENTER, "move right");
+    al_draw_bitmap(imagen, ANCHO_PANTALLA*0.6, TAM_BLOQUE*0.5,0);
+
+    al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*3.5, ALLEGRO_ALIGN_CENTER, "move right");
     imagen = al_load_bitmap("../allegro_files/flecha_der.PNG");
-    al_draw_bitmap(imagen, ANCHO_PANTALLA*0.75, TAM_BLOQUE*4,0);
-    
-    al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*7.5, ALLEGRO_ALIGN_CENTER, "move left");
+    al_draw_bitmap(imagen, ANCHO_PANTALLA*0.6, TAM_BLOQUE*3,0);
+
+    al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*6, ALLEGRO_ALIGN_CENTER, "move left");
     imagen = al_load_bitmap("../allegro_files/flecha_izq.PNG");
-    al_draw_bitmap(imagen, ANCHO_PANTALLA*0.75, TAM_BLOQUE*7,0);
-    
-    al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*10.5, ALLEGRO_ALIGN_CENTER, "soft drop");
+    al_draw_bitmap(imagen, ANCHO_PANTALLA*0.6, TAM_BLOQUE*5.5,0);
+
+    al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*8.5, ALLEGRO_ALIGN_CENTER, "soft drop");
     imagen = al_load_bitmap("../allegro_files/flecha_abajo.PNG");
-    al_draw_bitmap(imagen, ANCHO_PANTALLA*0.75, TAM_BLOQUE*10,0);
-    
-    al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*13.5, ALLEGRO_ALIGN_CENTER, "hard drop");
+    al_draw_bitmap(imagen, ANCHO_PANTALLA*0.6, TAM_BLOQUE*8,0);
+
+    al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*11, ALLEGRO_ALIGN_CENTER, "hard drop");
     imagen = al_load_bitmap("../allegro_files/space_bar.PNG");
-    al_draw_bitmap(imagen, ANCHO_PANTALLA*0.75, TAM_BLOQUE*13,0);
-    
-    al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*16.5, ALLEGRO_ALIGN_CENTER, "menu");
+    al_draw_bitmap(imagen, ANCHO_PANTALLA*0.6, TAM_BLOQUE*11,0);
+
+    al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*13.75, ALLEGRO_ALIGN_CENTER, "menu");
     imagen = al_load_bitmap("../allegro_files/esc_key.PNG");
-    al_draw_bitmap(imagen, ANCHO_PANTALLA*0.75, TAM_BLOQUE*16,0);
+    al_draw_bitmap(imagen, ANCHO_PANTALLA*0.6, TAM_BLOQUE*13.75,0);
+
+    al_draw_text(font, BLANCO, ANCHO_PANTALLA/4, TAM_BLOQUE*16, ALLEGRO_ALIGN_CENTER, "hold piece");
+    imagen = al_load_bitmap("../allegro_files/hold_key.png");
+    al_draw_bitmap(imagen, ANCHO_PANTALLA*0.6, TAM_BLOQUE*16,0);
 
     al_flip_display();
     

@@ -59,7 +59,7 @@ void init_jugador(game_stats_t* jugador)
 }
 void generador(pieza_t * in_use, game_stats_t* jugador)
 {
-    
+    in_use->bounce = 0;
     int aux;
     aux = rand();
     srand(aux);
@@ -244,7 +244,7 @@ void rotar(pieza_t* in_use,int mat[FIL][COL])
 {
     pieza_t to_use = *in_use;
     
-/*CREO UNA MATRIZ AUXILIAR PARA MANEJAR LOS DATOS DE LA ESTRUCTURA*/     
+/*CREO UNA MATRIZ VACIA AUXILIAR PARA MANEJAR LOS DATOS DE LA ESTRUCTURA*/     
     int mat_aux[4][4];
     int fil,col; //creo contadores para luego borrar todos los datos de la matriz, luego reutilizo las mismas variables para rellenarla
     for(fil=0; fil < 4; fil++){  
@@ -258,7 +258,7 @@ void rotar(pieza_t* in_use,int mat[FIL][COL])
        mat_aux[(int)to_use.mat_bloque[1][i]][(int)to_use.mat_bloque[0][i]] = (int) to_use.id;
        }
     
-    if(to_use.id == HERO || to_use.id == SMASHBOY)
+    if(to_use.id == HERO || to_use.id == SMASHBOY) //SI ES HERO O SMASHBOY, LAS MATRICES GIRAN DIFERENTE
     {
 /*ESTA ES LA PARTE QUE ROTA LA MATRIZ*/        
         for (i = 0; i < 4 / 2; i++) {
@@ -275,7 +275,7 @@ void rotar(pieza_t* in_use,int mat[FIL][COL])
         }
         
         int bloque=0;
-        
+        //AHORA VUEVLO A PONER EN LA ESTRUCTURA DE LA PIEZA, LAS NUEVAS POSICIONES DE LOS BLOQUES YA ROTADOS
         for (int x=0; x<4; x++){
         
             for (int y=0; y<4; y++){
@@ -309,7 +309,7 @@ void rotar(pieza_t* in_use,int mat[FIL][COL])
         }
         
         int bloque=0;
-        
+        //AHORA VUEVLO A PONER EN LA ESTRUCTURA DE LA PIEZA, LAS NUEVAS POSICIONES DE LOS BLOQUES YA ROTADOS
         for (int x=0; x<4; x++){
         
             for (int y=0; y<4; y++){
@@ -322,9 +322,22 @@ void rotar(pieza_t* in_use,int mat[FIL][COL])
                 }
             }
         }
-        
+        //ME FIJO QUE LA PIEZA PUEDA ROTAR, SI ES ASI, LA PIEZA ORIGINAL VA A VALER LO MISMO QUE LA AUXILIAR
         if(!check(&to_use, mat)){
             *in_use = to_use;
+        }
+        else if(to_use.bounce < 2){
+        /*ACA AGREGO EL BOUNCE DEL TETRIS*/    
+        for(fil = 0 ; fil < 2 ; fil++)
+        {
+            to_use.coord_y--;
+            if(!check(&to_use, mat)){
+                to_use.bounce++;
+                *in_use = to_use;
+                break;
+            }
+        }
+
         }
     }
 }

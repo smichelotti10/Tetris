@@ -152,7 +152,7 @@ int main (void) {
             al_stop_sample_instance(songInstance2);
             al_play_sample(sound4, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
             top_scores(&jugador);
-            game_over_allegro(&event, event_queue, font, sound1, &end, &in_use, matriz, &jugador);
+            game_over_allegro(&event, event_queue, font, sound1, &end, &in_use, matriz, &jugador, &hold);
 	    
         } 
     }

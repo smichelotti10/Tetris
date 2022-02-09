@@ -4,8 +4,11 @@
 #include "rules.h"
 #include "backend.h"
 
+/*Guarda para compilacion condicional para la funcion push_mat_down*/
 #ifdef RPI
 #include "juego_Rpi.h"
+
+/*funcion que limpia la linea completa y pasa los bloques una fila abajo, para la RPI*/
 
 void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, pieza_t* hold, long int level)
 {
@@ -30,6 +33,8 @@ void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, pieza_t* hold
 
 #ifdef ALLEGRO
 
+/*funcion que limpia la linea completa y pasa los bloques una fila abajo, para la ALLEGRO*/
+
 void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, pieza_t*hold, long int level)
 {
     int fil, col, i;
@@ -51,23 +56,30 @@ void push_mat_down (int matriz[FIL][COL], int fila, pieza_t* next, pieza_t*hold,
 }
 #endif
 
+/*funcion que inicializa los valores del juego especifico*/
 void init_jugador(game_stats_t* jugador)
 {
     jugador->level = 1;
     jugador->cant_piezas = 0;
     jugador->score = 0;
 }
+
+/*funcion que genera las piezas, incluye randomizacion*/
+
 void generador(pieza_t * in_use, game_stats_t* jugador)
 {
-    in_use->bounce = 0;
+   /*asigno el tipo de pieza de manera aleatoria*/
     int aux;
     aux = rand();
     srand(aux);
     in_use->id = rand()%7+1;
+	/*preparo el offset*/
     in_use->coord_x = 3;
     in_use->coord_y = 0;
     in_use->hold_previo = 0;
     
+    in_use->bounce = 0;
+    /*le otorgamos al jugador el nivel correcto*/
     jugador->cant_piezas++;
     switch (jugador->cant_piezas){
         
@@ -86,7 +98,7 @@ void generador(pieza_t * in_use, game_stats_t* jugador)
             break;
             
     }
-    
+   /*rellenamos la matriz de bloques con la pieza que le toco*/ 
     switch  (in_use->id)
     {
         case ORANGERICKY:
@@ -207,7 +219,7 @@ int mover_pieza(pieza_t* in_use, int mat[FIL][COL], char direccion)
     }
     return 0;
 }
-
+/*funcion que checkea si el movimiento de la pieza es posible*/
 int check(pieza_t* pieza, int mat[FIL][COL]) {
 
     int j;
@@ -342,6 +354,7 @@ void rotar(pieza_t* in_use,int mat[FIL][COL])
     }
 }
 
+/*funcion que verifica si hay una inea completa, y cuantas para limpiarlas*/
 int fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next, pieza_t* hold)
 {
     int fil, col, bloques, cant=0;
@@ -385,7 +398,7 @@ void espera(float number_of_seconds)
     while (clock() < start_time + number_of_seconds * CLOCKS_PER_SEC)
         ;
 }
-
+/*funcion que inserta en la matriz del juego los bloques de la pieza*/
 void setear_pieza(pieza_t* pieza, pieza_t* hold, int mat[FIL][COL])
 {
     int j;
@@ -505,6 +518,7 @@ void top_scores(game_stats_t* jugador){
     }
 }
 
+/*funcion para retener la pieza actual, reemplazarla por la siguiente pieza o la retenida anteriormente*/
 void funcion_hold (pieza_t *in_use, pieza_t *hold, pieza_t* to_use, game_stats_t* jugador) {
     
     pieza_t aux;

@@ -65,7 +65,6 @@ void init_jugador(game_stats_t* jugador)
 }
 
 /*funcion que genera las piezas, incluye randomizacion*/
-
 void generador(pieza_t * in_use, game_stats_t* jugador)
 {
    /*asigno el tipo de pieza de manera aleatoria*/
@@ -95,9 +94,9 @@ void generador(pieza_t * in_use, game_stats_t* jugador)
             jugador->level++;
             break;
         default:
-            break;
-            
+            break;   
     }
+
    /*rellenamos la matriz de bloques con la pieza que le toco*/ 
     switch  (in_use->id)
     {
@@ -186,6 +185,7 @@ void generador(pieza_t * in_use, game_stats_t* jugador)
             }
     }
 }
+
 int mover_pieza(pieza_t* in_use, int mat[FIL][COL], char direccion)
 {
     pieza_t to_use = *in_use;
@@ -219,6 +219,7 @@ int mover_pieza(pieza_t* in_use, int mat[FIL][COL], char direccion)
     }
     return 0;
 }
+
 /*funcion que checkea si el movimiento de la pieza es posible*/
 int check(pieza_t* pieza, int mat[FIL][COL]) {
 
@@ -389,15 +390,13 @@ int fila_completa (int matriz[FIL][COL], game_stats_t* jugador, pieza_t* next, p
 	return resto;
 }
 
-void espera(float number_of_seconds)
+void espera(float cantidad_segs)
 {
-    //float miliseconds = number_of_seconds * 1000;
-    // Storing start time
-    clock_t start_time = clock();
-    // looping till required time is not achieved
-    while (clock() < start_time + number_of_seconds * CLOCKS_PER_SEC)
+    clock_t tiempo_inicio = clock();  // Indico el tiempo de inicio
+    while (clock() < tiempo_inicio + cantidad_segs * CLOCKS_PER_SEC)  // Hasta que no pase el tiempo deseado no va a salir del loop
         ;
 }
+
 /*funcion que inserta en la matriz del juego los bloques de la pieza*/
 void setear_pieza(pieza_t* pieza, pieza_t* hold, int mat[FIL][COL])
 {

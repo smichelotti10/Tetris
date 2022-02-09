@@ -28,7 +28,7 @@ void setear_pieza(pieza_t* pieza, pieza_t* hold, int mat[FIL][COL]);
 
 /*Recibe un puntero a la pieza en juego, a la pieza en hold y la matriz de juego. Esta
 funcion mueve la pieza hacia abajo hasta que choque con otra pieza seteada o con el borde
-inferior de la matriz. Devuelve*/  //////////////////////////
+inferior de la matriz. Devuelve la cantidad de filas que bajó la matriz*/
 unsigned char all_down(pieza_t* in_use, pieza_t* hold, int matriz[FIL][COL]);
 
 /*Recibe un puntero a la pieza y la matriz de juego. Esta funcion rota 90° la pieza. Devuelve nada*/

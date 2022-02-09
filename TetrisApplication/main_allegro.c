@@ -75,8 +75,8 @@ int main (void) {
     }
     
     int value = al_show_native_message_box(display, "MessageBox", "Inicio del Juego", "Ust está por comenzar a jugar TETRIS. Desea continuar?", NULL, ALLEGRO_MESSAGEBOX_YES_NO);//Mnesaje en la pantalla de si o no antes de comenzar el juego para esperar confirmación del usuario
-    if(value!=1) //En el caso de que se haya precionado 'NO'
-    {
+    if(value!=1){ //En el caso de que se haya precionado 'NO'
+
 	//Se destruyen todas las variables y punteros creados
         al_rest(1.0);
         al_destroy_display(display);
@@ -130,7 +130,7 @@ int main (void) {
 
         if (time==0)//Si salio del break debido a que se cumplio el tiempo entonces:
         {
-            if(mover_pieza(&in_use, matriz, ABA)) //Se mueve la pieza para abajo
+            if(mover_pieza(&in_use, matriz, ABA)){ //Se mueve la pieza para abajo
                 al_play_sample(sound2, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);//Se hace el sonido de que llegó hasta abajo
                 setear_pieza(&in_use, &hold, matriz); //guardamos la pieza en la matriz
                 int var = fila_completa(matriz, &jugador, &to_use, &hold); //vemos si se completo una fila para sumar puntos               

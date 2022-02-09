@@ -308,7 +308,7 @@ void ask_name (game_stats_t* jugador, ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE 
                     i++; //Se incrementa el contador
                 }
                 else if((event->keyboard.keycode)==ALLEGRO_KEY_BACKSPACE)
-                {//Se verifica en el caso de que haya presionado espacio y se hacen los mismos pasos anteriores
+                {//Se verifica en el caso de que haya presionado borrar y se hacen los mismos pasos anteriores
                     if (i>0)
                     {
                         i--;//se resta el contador para poder borrar la letra colocada anteriormente
@@ -336,7 +336,7 @@ void ask_name (game_stats_t* jugador, ALLEGRO_EVENT *event, ALLEGRO_EVENT_QUEUE 
                     case ALLEGRO_KEY_ENTER://Si es enter se continua con el juego
                         end=1;
                         break;
-                    case ALLEGRO_KEY_BACKSPACE://Si es espacio se borra la ultima letra colocada
+                    case ALLEGRO_KEY_BACKSPACE://Si es la tecla borrar se borra la ultima letra colocada
                         i--;
                         string[i]=' ';
                         clear_display();
